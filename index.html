@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Bora Resenhar?</title>
-<meta name="description" content="O jogo do grupo de amigos: marcar rolê, desenhar, fofocar e descobrir quem é o Carlão.">
+<meta name="description" content="O jogo do grupo de amigos: marcar rolê, desenhar, fofocar e descobrir quem é o Bobão.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
@@ -359,10 +359,10 @@ const MODE_ORDER=['perfil','marcar','rabisco','fofoca','quem','figurinha'];
 const MODES={
  perfil:{n:'Foto de Perfil',c:'#ff5c8a',min:2,d:'Cada um desenha a foto de perfil de um amigo. O desenho vira o avatar dele no jogo!',
   rules:['Você recebe o nome de um amigo em segredo','Tem 75s pra desenhar a foto de perfil dele','A galera vota na foto mais engraçada (+100 por voto)','Quem desenhou quem só é revelado no final']},
- marcar:{n:'Bora Marcar?',c:'#ff8c42',min:4,d:'Fechem o rolê pelo chat. Cada um tem restrições secretas… e o Carlão quer furar tudo.',
-  rules:['Cada um recebe restrições secretas (ex.: “não pode no Domingo”)','Conversem no chat e votem nas 3 enquetes: a opção mais votada vence','Um de vocês é o CARLÃO: ele quer que alguém fique de fora do rolê','Eventos surpresa: a Mãe entra no grupo, bateria em 1%, áudio da tia…','No final, votem em quem é o Carlão']},
- rabisco:{n:'Rabisco do Carlão',c:'#ffd23f',min:3,d:'Um traço por vez num desenho coletivo. Todo mundo sabe o tema… menos o Carlão.',
-  rules:['Todo mundo recebe o tema secreto, menos o Carlão','Cada um faz UM traço por vez, em rodízio','Depois, votem em quem é o Carlão','Se pegarem o Carlão, ele ainda vence se acertar o tema!']},
+ marcar:{n:'Bora Marcar?',c:'#ff8c42',min:4,d:'Fechem o rolê pelo chat. Cada um tem restrições secretas… e o Bobão quer furar tudo.',
+  rules:['Cada um recebe restrições secretas (ex.: “não pode no Domingo”)','Conversem no chat e votem nas 3 enquetes: a opção mais votada vence','Um de vocês é o BOBÃO: ele quer que alguém fique de fora do rolê','Eventos surpresa: a Mãe entra no grupo, bateria em 1%, áudio da tia…','No final, votem em quem é o Bobão']},
+ rabisco:{n:'Rabisco do Bobão',c:'#ffd23f',min:3,d:'Um traço por vez num desenho coletivo. Todo mundo sabe o tema… menos o Bobão.',
+  rules:['Todo mundo recebe o tema secreto, menos o Bobão','Cada um faz UM traço por vez, em rodízio','Depois, votem em quem é o Bobão','Se pegarem o Bobão, ele ainda vence se acertar o tema!']},
  fofoca:{n:'Fofoca em Cadeia',c:'#b388ff',min:5,d:'Telefone sem fio desenhado: a fofoca vira desenho, que vira texto, que vira desenho…',
   rules:['Cada um escreve uma fofoca inventada sobre a galera','Ela passa pro próximo, que DESENHA a fofoca','O próximo vê só o desenho e descreve o que entendeu','No final, a gente vê como cada fofoca chegou']},
  quem:{n:'Quem Mandou Essa?',c:'#25d366',min:4,d:'Respostas anônimas no grupo. Descubra quem mandou cada uma.',
@@ -370,7 +370,7 @@ const MODES={
  figurinha:{n:'Concurso de Figurinhas',c:'#4cc9f0',min:4,d:'Crie a figurinha do tema e enfrente os amigos no mata-mata. A campeã vira a figurinha oficial do grupo!',
   rules:['Sai um tema (ex.: “Quando o Pix cai”)','90s pra criar sua figurinha (com texto e a cara da galera!)','Mata-mata: duas figurinhas por vez, todo mundo vota','A campeã vira a Figurinha Oficial e pode ser baixada']},
 };
-const FIG_THEMES=['Quando o Pix cai','Segunda-feira, 6h da manhã','O Carlão dizendo que tá chegando','Eu ouvindo um áudio de 5 minutos','Quando alguém manda “precisamos conversar”','Eu no dia do pagamento','Eu dois dias depois do pagamento','Quando a mãe chama pelo nome completo','Eu fingindo que entendi','O grupo quando alguém some por 3 dias','Quando o professor fala “vai cair na prova”','Eu esperando o ônibus no sol','Quando a comida chega','Eu às 3h da manhã no celular','Quando o crush visualiza e não responde','Eu quando lembro que amanhã tem aula','O Wi-Fi caindo no meio da partida'];
+const FIG_THEMES=['Quando o Pix cai','Segunda-feira, 6h da manhã','O Bobão dizendo que tá chegando','Eu ouvindo um áudio de 5 minutos','Quando alguém manda “precisamos conversar”','Eu no dia do pagamento','Eu dois dias depois do pagamento','Quando a mãe chama pelo nome completo','Eu fingindo que entendi','O grupo quando alguém some por 3 dias','Quando o professor fala “vai cair na prova”','Eu esperando o ônibus no sol','Quando a comida chega','Eu às 3h da manhã no celular','Quando o crush visualiza e não responde','Eu quando lembro que amanhã tem aula','O Wi-Fi caindo no meio da partida'];
 const RABISCO_WORDS=['Praia','Churrasco','Cinema','Shopping','Balada','Futebol','Piscina','Show','Aniversário','Karaokê','Pizza','Acampamento','Academia','Festa junina','Boliche','Sorveteria','Parque','Aeroporto','Casamento','Pescaria','Carnaval','Escola','Hospital','Supermercado','Ônibus','Zoológico','Pagode','Rodízio','Fazenda','Montanha-russa','Cachoeira','Feira','Padaria','Videogame','Natal'];
 const FOFOCA_T=['{A} foi visto no shopping de mãos dadas com {B}','{A} chorou assistindo desenho animado','{A} tá namorando escondido o vizinho','{A} e {B} brigaram pela última coxinha','{A} caiu da cadeira na frente da sala inteira','{A} mandou áudio errado no grupo da família','{A} foi barrado na balada por estar de chinelo','{A} tem um perfil secreto de dancinha','{A} dormiu no ônibus e acordou em outra cidade','{A} foi pego cantando sertanejo no chuveiro','{A} adotou 7 gatos sem contar pra ninguém','{A} levou um fora de {B} na festa junina'];
 const QUEM_QS=['Qual a pior desculpa que você já deu pra furar um rolê?','Que mensagem você mandaria no grupo às 3h da manhã?','Qual é a sua maior red flag?','O que você faria com R$ 1 milhão amanhã?','Qual mentira você mais conta?','Qual seria o título da sua biografia?','Qual o seu talento mais inútil?','Se o grupo fosse uma série, qual seria o nome?','O que você faria se acordasse invisível?','Qual comida você defenderia até a morte?','Descreva seu último rolê em 5 palavras.','Qual foi seu maior mico (resumido)?','Qual é a sua opinião polêmica?','Qual seria seu nome de artista?','O que você diria pro seu eu de 10 anos?','Qual música toca na sua cabeça agora?'];
@@ -650,7 +650,7 @@ function toRetro(){
  const st=H.st;clearTimer();H.gen++;const S=id=>H.stats[id]||{};const ps=st.players;
  const best=k=>{let b=null,bv=0;ps.forEach(p=>{const x=S(p.id)[k]||0;if(x>bv){bv=x;b=p.id}});return b?{pid:b,v:bv}:null};
  const aw=[];let x;const s_=(n,a,b)=>n>1?b:a;
- if(x=best('carlaoWins'))aw.push({e:'carlao',t:'Carlão do Ano',pid:x.pid,d:`Furou ${x.v} ${s_(x.v,'rolê','rolês')} sem dó`});
+ if(x=best('carlaoWins'))aw.push({e:'carlao',t:'Bobão do Ano',pid:x.pid,d:`Furou ${x.v} ${s_(x.v,'rolê','rolês')} sem dó`});
  if(x=best('drawVotes'))aw.push({e:'palette',t:'Picasso do Grupo',pid:x.pid,d:`${x.v} ${s_(x.v,'voto','votos')} nos desenhos`});
  if(H.champ)aw.push({e:'figurinha',t:'Rei/Rainha das Figurinhas',pid:H.champ,d:'Criou a figurinha oficial'});
  if(x=best('correct'))aw.push({e:'magnifier',t:'Detetive',pid:x.pid,d:`${x.v} ${s_(x.v,'palpite certeiro','palpites certeiros')}`});
@@ -1124,8 +1124,8 @@ SCR.fallback=S_({render:()=>waitHTML('Carregando…')});
 /* ---- home ---- */
 SCR.home=()=>({mount(main){
  const code0=(new URLSearchParams(location.search).get('sala')||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,5);
- main.innerHTML=`<div class="home"><div class="hero">${spr('carlao','s6')}<div class="logo">Bora<br>Resenhar<b>?</b></div></div><p class="tag">Todo grupo tem um Carlão.</p>
- <div class="card homecard"><label class="lbl" for="hname">Seu nome no grupo</label><input id="hname" maxlength="16" placeholder="Ex.: Carlão" value="${esc(store.lget('br_name')||'')}">
+ main.innerHTML=`<div class="home"><div class="hero">${spr('carlao','s6')}<div class="logo">Bora<br>Resenhar<b>?</b></div></div><p class="tag">Todo grupo tem um Bobão.</p>
+ <div class="card homecard"><label class="lbl" for="hname">Seu nome no grupo</label><input id="hname" maxlength="16" placeholder="Ex.: Bobão" value="${esc(store.lget('br_name')||'')}">
  <button class="btn big" id="hcreate">${spr('sparkle')} Criar sala</button><div class="or">ou entre na sala de um amigo</div>
  <div class="row"><input id="hcode" maxlength="5" placeholder="CÓDIGO" value="${esc(code0)}" style="text-transform:uppercase;flex:1;letter-spacing:.2em;font-weight:800;min-width:0"><button class="btn yel" id="hjoin">Entrar</button></div>
  <div id="hstatus" class="hstatus"></div></div>
@@ -1229,8 +1229,8 @@ SCR['figurinha:match']=S_({render:v=>{const m=v.s.m;const res=m.phase==='matchRe
 SCR['figurinha:champion']=S_({render:v=>{const m=v.s.m;return `<div class="stage"><div class="headline">${spr('medal1')} Figurinha Oficial do Grupo!</div><p class="muted">“${esc(m.theme)}”</p><div class="fig win champ">${imgTag(m.champ)}</div><div class="byline">criada por ${av(P(m.by),'md')} <b class="hl">${nm(m.by)}</b> (+500)</div><button class="btn yel" id="dl">${spr('download')} Baixar figurinha</button><p class="muted small">Já sai em 512×512, o tamanho de figurinha do WhatsApp. Use um app de figurinhas pra adicionar!</p></div>`},
  bind:main=>{const b=$('#dl',main);if(b)b.onclick=()=>download(IMG[V.s.m.champ],'figurinha-oficial')},mount:()=>burst(['figurinha','star','fire','sparkle'])});
 
-/* ---- Rabisco do Carlão ---- */
-function secretRabisco(v){return v.me.carlao?`<div class="secret carl"><div class="sh">${spr('carlao','s3')}<div>Você é o <b>CARLÃO</b>!</div></div><small>Você NÃO sabe o tema. Observe os traços da galera e disfarce: faça um traço que pareça fazer sentido…</small></div>`:`<div class="secret"><div class="sh">${spr('card','s3')}<div>Tema secreto:<br><span class="hl big">${esc(v.me.word||'?')}</span></div></div><small>Um traço por vez. Não entrega fácil pro Carlão!</small></div>`}
+/* ---- Rabisco do Bobão ---- */
+function secretRabisco(v){return v.me.carlao?`<div class="secret carl"><div class="sh">${spr('carlao','s3')}<div>Você é o <b>BOBÃO</b>!</div></div><small>Você NÃO sabe o tema. Observe os traços da galera e disfarce: faça um traço que pareça fazer sentido…</small></div>`:`<div class="secret"><div class="sh">${spr('card','s3')}<div>Tema secreto:<br><span class="hl big">${esc(v.me.word||'?')}</span></div></div><small>Um traço por vez. Não entrega fácil pro Bobão!</small></div>`}
 SCR['rabisco:draw']=()=>{let board,n=-1,drawnTurn=-1;return{
  mount(main,v){main.innerHTML=`<div class="rabisco"><div class="rleft">${secretRabisco(v)}<div class="card"><div class="ptitle">Ordem dos traços</div><div id="order"></div></div></div><div class="rcenter"><div id="turninfo" class="headline sm"></div><div id="board"></div></div></div>`;board=StrokeBoard($('#board'));this.update(v)},
  update(v){
@@ -1244,18 +1244,18 @@ SCR['rabisco:draw']=()=>{let board,n=-1,drawnTurn=-1;return{
  onLive(d){if(board)board.redraw(null,{p:d.p,c:d.c})}
 }};
 SCR['rabisco:vote']=S_({render:v=>{const m=v.s.m;const voted=m.voted.includes(ME.pid);const ids=v.s.players.filter(p=>p.id!==ME.pid).map(p=>p.id);
-  return `<div class="rvote"><div class="mini" id="mb"></div><div class="stage"><div class="headline">${spr('carlao')} Quem é o Carlão?</div><p class="muted">${voted?'Voto registrado! Esperando a galera…':'Quem rabiscou sem saber o tema?'}</p>${voteGrid(ids,LOCAL.vote,voted)}<p class="muted small">${m.voted.length}/${onlineCount(v)} votaram</p>${secretRabisco(v)}</div></div>`},
+  return `<div class="rvote"><div class="mini" id="mb"></div><div class="stage"><div class="headline">${spr('carlao')} Quem é o Bobão?</div><p class="muted">${voted?'Voto registrado! Esperando a galera…':'Quem rabiscou sem saber o tema?'}</p>${voteGrid(ids,LOCAL.vote,voted)}<p class="muted small">${m.voted.length}/${onlineCount(v)} votaram</p>${secretRabisco(v)}</div></div>`},
  bind:(main,v)=>{bindVote(main);drawMini($('#mb',main),v.s.m.strokes)}});
 SCR['rabisco:guess']=()=>({mount(main,v){const m=v.s.m;const me=!!v.me.carlao;
- main.innerHTML=`<div class="stage">${spr('carlao','s6 bigico')}<div class="headline">Pegaram o Carlão: ${av(P(m.carl),'md')} <span class="hl">${nm(m.carl)}</span>!</div>${me?`<p>Última chance: adivinhe o tema do desenho e vença mesmo assim!</p><div class="row"><input id="gin" maxlength="30" placeholder="O tema era…"><button class="btn yel" id="gbtn">${spr('target')} Chutar</button></div>`:`<p class="muted">Calma… se o Carlão acertar o tema, ele vence mesmo assim!</p>`}<div class="mini" id="mb"></div></div>`;
+ main.innerHTML=`<div class="stage">${spr('carlao','s6 bigico')}<div class="headline">Pegaram o Bobão: ${av(P(m.carl),'md')} <span class="hl">${nm(m.carl)}</span>!</div>${me?`<p>Última chance: adivinhe o tema do desenho e vença mesmo assim!</p><div class="row"><input id="gin" maxlength="30" placeholder="O tema era…"><button class="btn yel" id="gbtn">${spr('target')} Chutar</button></div>`:`<p class="muted">Calma… se o Bobão acertar o tema, ele vence mesmo assim!</p>`}<div class="mini" id="mb"></div></div>`;
  drawMini($('#mb'),m.strokes);
  if(me){const go=()=>{const t=$('#gin').value.trim();if(t){act({a:'guess',text:t});$('#gbtn').disabled=true;$('#gin').disabled=true}};$('#gbtn').onclick=go;$('#gin').onkeydown=e=>{if(e.key==='Enter')go()};$('#gin').focus()}
 }});
-SCR['rabisco:result']=S_({render:v=>{const r=v.s.m.res;return `<div class="stage">${spr(r.carlWins?'carlao':'party','s6 bigico')}<div class="headline">${r.carlWins?'O CARLÃO VENCEU!':'A galera pegou o Carlão!'}</div><div class="card"><p>O Carlão era ${av(P(r.carl),'md')} <b class="hl">${nm(r.carl)}</b></p><p>O tema era <b class="hl">${esc(r.word)}</b></p>${r.caught?(r.guess!=null?`<p>Chute do Carlão: “${esc(r.guess||'—')}” ${r.guessOk?'(acertou!)':'(errou)'}</p>`:''):'<p>A galera votou na pessoa errada!</p>'}</div><div class="mini" id="mb"></div></div>`},
+SCR['rabisco:result']=S_({render:v=>{const r=v.s.m.res;return `<div class="stage">${spr(r.carlWins?'carlao':'party','s6 bigico')}<div class="headline">${r.carlWins?'O BOBÃO VENCEU!':'A galera pegou o Bobão!'}</div><div class="card"><p>O Bobão era ${av(P(r.carl),'md')} <b class="hl">${nm(r.carl)}</b></p><p>O tema era <b class="hl">${esc(r.word)}</b></p>${r.caught?(r.guess!=null?`<p>Chute do Bobão: “${esc(r.guess||'—')}” ${r.guessOk?'(acertou!)':'(errou)'}</p>`:''):'<p>A galera votou na pessoa errada!</p>'}</div><div class="mini" id="mb"></div></div>`},
  bind:(main,v)=>drawMini($('#mb',main),v.s.m.strokes),mount:()=>burst(V.s.m.res.carlWins?['carlao','clown','skull']:['party','magnifier','clap'])});
 
 /* ---- Fofoca em Cadeia ---- */
-function fofocaSug(v){const ns=shuffle(v.s.players.map(p=>p.name));const A=ns[0]||'O Carlão',B=ns[1]||'o Carlão';return pick(FOFOCA_T).replace('{A}',A).replace('{B}',B)}
+function fofocaSug(v){const ns=shuffle(v.s.players.map(p=>p.name));const A=ns[0]||'O Bobão',B=ns[1]||'o Bobão';return pick(FOFOCA_T).replace('{A}',A).replace('{B}',B)}
 const FOF_TEXT=textScreen({eligible:v=>!!v.me.kind,done:v=>v.s.m.done,sug:fofocaSug,showSug:v=>!v.me.prev,max:140,ph:'Ex.: O Pedro foi visto no shopping com a ex do Lucas',
  head:v=>{const pr=v.me.prev;const stp=`<div class="pill">Etapa ${v.s.m.step+1}/${v.s.m.steps}</div>`;
   if(!pr)return `${stp}<div class="headline">${spr('fofoca')} Escreva uma fofoca (inventada!) sobre a galera</div><p class="muted">Ela vai passar de mão em mão… e de desenho em desenho.</p>`;
@@ -1280,8 +1280,8 @@ SCR['quem:reveal']=S_({render:v=>{const m=v.s.m;return `<div class="stage"><div 
 
 /* ---- Bora Marcar? ---- */
 function cardsHTML(v){const cs=(v.me.cards||[]).map(c=>`<li>${esc(c)}</li>`).join('');
- return v.me.carlao?`<div class="secret carl"><div class="sh">${spr('carlao','s3')}<div>Você é o <b>CARLÃO</b>!</div></div><small>Objetivo: fazer o rolê dar errado (alguém não poder ir) <b>ou</b> não ser descoberto. Use essas cartas falsas pra disfarçar:</small><ul>${cs}</ul></div>`
-  :`<div class="secret"><div class="sh">${spr('card','s3')}<div>Suas restrições secretas</div></div><ul>${cs}</ul><small>Conte pra galera (ou não…). Cuidado: o Carlão pode mentir!</small></div>`}
+ return v.me.carlao?`<div class="secret carl"><div class="sh">${spr('carlao','s3')}<div>Você é o <b>BOBÃO</b>!</div></div><small>Objetivo: fazer o rolê dar errado (alguém não poder ir) <b>ou</b> não ser descoberto. Use essas cartas falsas pra disfarçar:</small><ul>${cs}</ul></div>`
+  :`<div class="secret"><div class="sh">${spr('card','s3')}<div>Suas restrições secretas</div></div><ul>${cs}</ul><small>Conte pra galera (ou não…). Cuidado: o Bobão pode mentir!</small></div>`}
 function pollsHTML(v,ro){const m=v.s.m;return m.cats.map((c,ci)=>{const votes=m.polls[ci]||{};const total=Object.keys(votes).length;
  return `<div class="poll"><div class="ptitle">${spr('poll')} ${esc(c.n)}</div>${c.o.map((o,oi)=>{const vs=Object.keys(votes).filter(pid=>votes[pid]===oi);const mine=votes[ME.pid]===oi;const pct=total?Math.round(vs.length/total*100):0;
   return `<button class="popt ${mine?'on':''}" data-c="${ci}" data-o="${oi}" ${ro?'disabled':''}><span class="pbar" style="width:${pct}%"></span><span class="plabel">${spr(mine?'check':'box')} ${esc(o)}</span><span class="pvoters">${vs.map(id=>av(P(id),'xs')).join('')}</span></button>`}).join('')}</div>`}).join('')}
@@ -1310,14 +1310,14 @@ function bindHold(){const b=$('#holdBtn'),bar=$('#holdBar');if(!b)return;let t=n
  b.onpointerdown=e=>{try{b.setPointerCapture(e.pointerId)}catch(_){}if(t)return;t=setInterval(()=>{prog+=100/60;bar.style.width=Math.min(100,prog)+'%';if(prog>=100){clearInterval(t);t=null;act({a:'audioDone'})}},100)};
  b.onpointerup=b.onpointercancel=stop;b.onpointerleave=stop;}
 SCR['marcar:vote']=S_({render:v=>{const m=v.s.m;const voted=m.voted.includes(ME.pid);const ids=v.s.players.filter(p=>p.id!==ME.pid).map(p=>p.id);
-  return `<div class="stage"><div class="headline">${spr('carlao')} Quem é o Carlão?</div><p class="muted">${voted?'Voto registrado! Esperando a galera…':'Quem estava sabotando o rolê?'}</p>${voteGrid(ids,LOCAL.vote,voted)}<p class="muted small">${m.voted.length}/${onlineCount(v)} votaram</p><div class="rvote"><div class="panel" style="min-width:280px">${pollsHTML(v,true)}</div><div style="max-width:340px">${cardsHTML(v)}</div></div></div>`},
+  return `<div class="stage"><div class="headline">${spr('carlao')} Quem é o Bobão?</div><p class="muted">${voted?'Voto registrado! Esperando a galera…':'Quem estava sabotando o rolê?'}</p>${voteGrid(ids,LOCAL.vote,voted)}<p class="muted small">${m.voted.length}/${onlineCount(v)} votaram</p><div class="rvote"><div class="panel" style="min-width:280px">${pollsHTML(v,true)}</div><div style="max-width:340px">${cardsHTML(v)}</div></div></div>`},
  bind:main=>bindVote(main)});
 SCR['marcar:result']=S_({render:v=>{const r=v.s.m.res;
   return `<div class="stage">${spr(r.ok?'party':'x','s4 bigico')}<div class="headline">${r.ok?'ROLÊ MARCADO!':'O ROLÊ FUROU!'}</div><div class="mission">${esc(v.s.m.title)}</div>
   <div class="plan">${r.plan.map(x=>`<div><small>${esc(x.n)}${x.rnd?' (ninguém votou: sorteado)':''}</small>${esc(x.o)}</div>`).join('')}</div>
   ${r.viol.length?`<div>${r.viol.map(x=>`<div class="viol">${spr('x')} ${av(P(x.pid),'xs')} <b>${nm(x.pid)}</b> não pode ir → ${esc(x.text)}</div>`).join('')}</div>`:`<p class="hl row" style="justify-content:center">${spr('check')} Todo mundo consegue ir!</p>`}
-  <div class="card"><p class="row" style="justify-content:center">${spr('carlao','s2')} ${r.caught?'Pegaram o Carlão:':'O Carlão passou batido:'} ${av(P(r.carl),'md')} <b class="hl">${nm(r.carl)}</b></p></div>
-  <div class="ptitle">${spr('card')} As cartas de todo mundo</div><div class="cardsgrid">${r.cards.map(c=>`<div class="pcards ${c.carl?'carl':''}">${av(P(c.pid),'xs')} <b>${nm(c.pid)}</b>${c.carl?' (Carlão, cartas falsas)':''}<ul>${c.cards.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>`).join('')}</div></div>`},
+  <div class="card"><p class="row" style="justify-content:center">${spr('carlao','s2')} ${r.caught?'Pegaram o Bobão:':'O Bobão passou batido:'} ${av(P(r.carl),'md')} <b class="hl">${nm(r.carl)}</b></p></div>
+  <div class="ptitle">${spr('card')} As cartas de todo mundo</div><div class="cardsgrid">${r.cards.map(c=>`<div class="pcards ${c.carl?'carl':''}">${av(P(c.pid),'xs')} <b>${nm(c.pid)}</b>${c.carl?' (Bobão, cartas falsas)':''}<ul>${c.cards.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>`).join('')}</div></div>`},
  mount:()=>burst(V.s.m.res.ok?['party','star','heart']:['x','carlao','clown'])});
 
 /* ---- Retrospectiva ---- */
