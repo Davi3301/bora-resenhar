@@ -110,7 +110,7 @@ main{padding:18px 16px;max-width:1300px;margin:0 auto}
 .cguide{position:absolute;inset:3%;border:3px dashed #0003;border-radius:50%;pointer-events:none}
 .board{width:min(560px,92vw)}
 .board canvas{cursor:not-allowed}.board canvas.active{cursor:crosshair;outline:5px solid var(--yel);outline-offset:-5px}
-.tools{display:flex;flex-direction:column;gap:10px;width:236px;background:linear-gradient(180deg,#14212a,#101a20);border:2px solid var(--line);border-radius:16px;padding:12px}
+.tools{display:flex;flex-direction:column;gap:10px;width:280px;background:linear-gradient(180deg,#14212a,#101a20);border:2px solid var(--line);border-radius:16px;padding:12px}
 @media(max-width:780px){.tools{width:min(480px,92vw)}}
 .trow{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
 .tools button{background:var(--panel2);border:2px solid transparent;border-radius:11px;min-width:42px;height:42px;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 3px 0 #0006}
@@ -122,6 +122,20 @@ main{padding:18px 16px;max-width:1300px;margin:0 auto}
 .stamps button{padding:0;overflow:hidden;border-radius:50%;width:42px}
 .stamps img{width:38px;height:38px;border-radius:50%;object-fit:cover;background:#fff}
 .textrow input{width:100%}
+.cwrap canvas.ov{position:absolute;inset:0;pointer-events:none}
+.tgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.tgrid button{min-width:0!important;width:100%}
+.tools button.tog{height:34px;padding:0 10px;font-size:.8rem;font-weight:800;gap:5px;flex:1}
+.tools button.tog .spr{width:18px;height:18px}
+.tools button.tog.on{border-color:var(--green);background:#123326}
+.slider{display:flex;align-items:center;gap:8px;font-size:.8rem;font-weight:800;color:var(--mut)}
+.slider span{width:70px}.slider b{width:42px;text-align:right;color:var(--txt)}
+.slider input[type=range]{flex:1;accent-color:var(--yel);background:transparent;border:0;padding:0;min-width:0}
+.cpick{width:28px;height:28px;border-radius:50%;border:2px solid var(--ink);background:conic-gradient(#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00);position:relative;overflow:hidden;cursor:pointer;box-shadow:0 2px 0 #0007;flex:none}
+.cpick input{opacity:0;position:absolute;inset:0;width:100%;height:100%;cursor:pointer;padding:0;border:0}
+.acts{align-items:center}
+.cur-swatch{margin-left:auto;width:42px;height:42px;border-radius:12px;border:3px solid var(--ink);box-shadow:0 3px 0 #0006}
+.tools .tip{font-size:.72rem;line-height:1.3}
 /* stage */
 .stage{display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
 .headline{font-family:'Baloo 2',sans-serif;font-size:clamp(1.4rem,3vw,2rem);font-weight:800;line-height:1.15;display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;text-shadow:0 3px 0 #0007}
@@ -384,6 +398,14 @@ const SPR={
  impostor:`<path d="M16 3C9.5 3 6 8.5 6 15v13.5h20V15C26 8.5 22.5 3 16 3z" fill="#5b3a8c"/><path d="M9.5 16.5c0-4.6 2.9-7.8 6.5-7.8s6.5 3.2 6.5 7.8v5.5h-13z" fill="#15191d"/><path d="M11 15.6l3.4 1.4M21 15.6l-3.4 1.4" fill="none" stroke="#fff" stroke-width="1.5"/><ellipse cx="12.9" cy="18.6" rx="1.7" ry="1.2" fill="#fff" ${N}/><ellipse cx="19.1" cy="18.6" rx="1.7" ry="1.2" fill="#fff" ${N}/>`,
  angel:`<ellipse cx="16" cy="5" rx="8" ry="2.7" fill="none" stroke-width="4.4"/><ellipse cx="16" cy="5" rx="8" ry="2.7" fill="none" stroke="#ffd23f" stroke-width="2.2"/><circle cx="16" cy="18.5" r="11.3" fill="#ffd23f"/><path d="M10 17q2-2.6 4 0M18 17q2-2.6 4 0" fill="none"/><path d="M11.5 22q4.5 3.6 9 0" fill="none"/><circle cx="8.6" cy="21" r="1.7" fill="#ff8fa3" ${N}/><circle cx="23.4" cy="21" r="1.7" fill="#ff8fa3" ${N}/>`,
  liar:`<circle cx="13.5" cy="16" r="11.3" fill="#ffd23f"/><path d="M21.5 15h8a1.7 1.7 0 0 1 0 3.4h-8z" fill="#ff8c42"/><circle cx="10.8" cy="13.2" r="1.8" fill="#15191d" ${N}/><circle cx="17.6" cy="13.2" r="1.8" fill="#15191d" ${N}/><path d="M7.5 9.6l3.2-1M20.5 9.6l-3.2-1" fill="none" stroke-width="1.7"/><path d="M8.8 21.5q4 2.4 8-.6" fill="none"/>`,
+ marker:`<g transform="rotate(40 16 16)"><rect x="11" y="2.5" width="10" height="15" rx="2.5" fill="#ffd23f"/><rect x="11" y="13" width="10" height="4.5" fill="#f5b700"/><path d="M11.5 17.5h9l-1.5 5h-6z" fill="#fff"/><path d="M13.5 22.5h5v5l-5 1.5z" fill="#ffd23f"/></g>`,
+ spray:`<rect x="8" y="11" width="13" height="18" rx="3" fill="#4cc9f0"/><rect x="10.5" y="5.5" width="8" height="5.5" rx="1.2" fill="#d5dbe0"/><path d="M14.5 5.5V3.5h4.5" fill="none"/><g fill="#ff5c8a" stroke="none"><circle cx="24" cy="5" r="1.4"/><circle cx="27.5" cy="8.5" r="1.4"/><circle cx="24.5" cy="10.5" r="1.1"/><circle cx="28.5" cy="3.5" r="1.1"/><circle cx="21.5" cy="7.8" r="1"/></g><path d="M11 17h7" fill="none" stroke="#fff" stroke-width="1.6" opacity=".7"/>`,
+ dropper:`<path d="M20.5 4.5a3.8 3.8 0 0 1 5.4 5.4l-3.2 3.2-5.4-5.4z" fill="#ff5c8a"/><path d="M17.5 8.5l6 6L12 26l-4.5 1.2L8.7 22.7z" fill="#fff"/><path d="M10 21l7 0" fill="none" stroke="#4cc9f0" stroke-width="2.4"/><circle cx="5.5" cy="28" r="2" fill="#4cc9f0"/>`,
+ line:`<path d="M6 26L26 6" fill="none" stroke="#fff" stroke-width="3.4"/><circle cx="6" cy="26" r="2.8" fill="#ffd23f"/><circle cx="26" cy="6" r="2.8" fill="#ffd23f"/>`,
+ rect:`<rect x="4.5" y="8" width="23" height="16" rx="2" fill="#4cc9f0"/>`,
+ ellipse:`<ellipse cx="16" cy="16" rx="11.5" ry="9.5" fill="#ff8c42"/>`,
+ mirror:`<path d="M16 3v26" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="3 3"/><path d="M13 9L4.5 16l8.5 7z" fill="#ff5c8a"/><path d="M19 9l8.5 7-8.5 7z" fill="#4cc9f0"/>`,
+ redo:`<path d="M21.5 6.5l6 6-6 6" fill="none" stroke="#fff" stroke-width="3.2"/><path d="M26.5 12.5H13a7 7 0 0 0 0 14h5" fill="none" stroke="#fff" stroke-width="3.2"/>`,
 };
 const MODE_ICON={perfil:'perfil',quiz:'quiz',impostor:'impostor',rabisco:'rabisco',fofoca:'fofoca',quem:'quem',verdade:'angel',figurinha:'figurinha'};
 function spr(n,cls=''){return `<svg class="spr ${cls}" aria-hidden="true"><use href="#s-${n}"></use></svg>`}
@@ -397,22 +419,22 @@ function spr(n,cls=''){return `<svg class="spr ${cls}" aria-hidden="true"><use h
 /* ---------------- conteúdo ---------------- */
 const MODE_ORDER=['perfil','quiz','impostor','rabisco','fofoca','quem','verdade','figurinha'];
 const MODES={
- perfil:{n:'Foto de Perfil',c:'#ff5c8a',min:2,d:'Cada um desenha a foto de perfil de um amigo. O desenho vira o avatar dele no jogo!',
-  rules:['Você recebe o nome de um amigo em segredo','Tem 75s pra desenhar a foto de perfil dele','A galera vota na foto mais engraçada (+100 por voto)','Quem desenhou quem só é revelado no final']},
- quiz:{n:'Quiz Relâmpago',c:'#ff8c42',min:3,d:'Perguntas e respostas valendo pontos. Quem acerta mais rápido ganha mais!',
-  rules:['8 perguntas de conhecimentos gerais, com 4 alternativas cada','15 segundos por pergunta','Acertou? Quanto mais rápido, mais pontos (até 1000)','Acertos seguidos dão bônus de sequência']},
- impostor:{n:'Impostor',c:'#ff4d4d',min:4,d:'Todo mundo recebe a mesma palavra, menos o impostor. Cada um dá uma dica… e o impostor tem que disfarçar.',
+ perfil:{n:'Foto de Perfil',c:'#ff5c8a',min:4,d:'Cada um desenha a foto de perfil de um amigo. O desenho vira o avatar dele no jogo!',
+  rules:['Você recebe o nome de um amigo em segredo','Tem 2 minutos pra desenhar a foto de perfil dele','A galera vota na foto mais engraçada (+100 por voto)','Quem desenhou quem só é revelado no final']},
+ quiz:{n:'Quiz Relâmpago',c:'#ff8c42',min:4,d:'Perguntas e respostas valendo pontos. Quem acerta mais rápido ganha mais!',
+  rules:['8 perguntas de conhecimentos gerais, com 4 alternativas cada','20 segundos por pergunta','Acertou? Quanto mais rápido, mais pontos (até 1000)','Acertos seguidos dão bônus de sequência']},
+ impostor:{n:'Impostor',c:'#ff4d4d',min:5,d:'Todo mundo recebe a mesma palavra, menos o impostor. Cada um dá uma dica… e o impostor tem que disfarçar.',
   rules:['Todo mundo vê a palavra secreta, menos o IMPOSTOR (ele só sabe a categoria)','Na sua vez, mande UMA palavra de dica (sem falar a palavra!)','Duas rodadas de dicas, depois votem em quem é o impostor','Se pegarem o impostor, ele ainda vence se adivinhar a palavra']},
- verdade:{n:'Verdade ou Verdade',c:'#06d6a0',min:6,d:'Cada um vai pra berlinda e tem que responder uma pergunta. Aqui não tem desafio, só verdade!',
+ verdade:{n:'Verdade ou Verdade',c:'#06d6a0',min:8,d:'Cada um vai pra berlinda e tem que responder uma pergunta. Aqui não tem desafio, só verdade!',
   rules:['Na sua vez, você escolhe 1 de 2 perguntas','Responda digitando ou em voz alta na call','A galera vota se acredita ou se você mentiu (+100 por cada “acredito”)','Amarelou e pulou a pergunta? -100 pontos']},
- rabisco:{n:'Rabisco do Bobão',c:'#ffd23f',min:3,d:'Um traço por vez num desenho coletivo. Todo mundo sabe o tema… menos o Bobão.',
+ rabisco:{n:'Rabisco do Bobão',c:'#ffd23f',min:5,d:'Um traço por vez num desenho coletivo. Todo mundo sabe o tema… menos o Bobão.',
   rules:['Todo mundo recebe o tema secreto, menos o Bobão','Cada um faz UM traço por vez, em rodízio','Depois, votem em quem é o Bobão','Se pegarem o Bobão, ele ainda vence se acertar o tema!']},
- fofoca:{n:'Fofoca em Cadeia',c:'#b388ff',min:5,d:'Telefone sem fio desenhado: a fofoca vira desenho, que vira texto, que vira desenho…',
+ fofoca:{n:'Fofoca em Cadeia',c:'#b388ff',min:8,d:'Telefone sem fio desenhado: a fofoca vira desenho, que vira texto, que vira desenho…',
   rules:['Cada um escreve uma fofoca inventada sobre a galera','Ela passa pro próximo, que DESENHA a fofoca','O próximo vê só o desenho e descreve o que entendeu','No final, a gente vê como cada fofoca chegou']},
- quem:{n:'Quem Mandou Essa?',c:'#25d366',min:4,d:'Respostas anônimas no grupo. Descubra quem mandou cada uma.',
+ quem:{n:'Quem Mandou Essa?',c:'#25d366',min:6,d:'Respostas anônimas no grupo. Descubra quem mandou cada uma.',
   rules:['Aparece uma pergunta e todo mundo responde anonimamente','Depois, chute quem mandou cada mensagem','+100 por acerto · +50 cada vez que você enganar alguém','2 rodadas']},
- figurinha:{n:'Concurso de Figurinhas',c:'#4cc9f0',min:4,d:'Crie a figurinha do tema e enfrente os amigos no mata-mata. A campeã vira a figurinha oficial do grupo!',
-  rules:['Sai um tema (ex.: “Quando o Pix cai”)','90s pra criar sua figurinha (com texto e a cara da galera!)','Mata-mata: duas figurinhas por vez, todo mundo vota','A campeã vira a Figurinha Oficial e pode ser baixada']},
+ figurinha:{n:'Concurso de Figurinhas',c:'#4cc9f0',min:6,d:'Crie a figurinha do tema e enfrente os amigos no mata-mata. A campeã vira a figurinha oficial do grupo!',
+  rules:['Sai um tema (ex.: “Quando o Pix cai”)','2min30 pra criar sua figurinha (com texto e a cara da galera!)','Mata-mata: duas figurinhas por vez, todo mundo vota','A campeã vira a Figurinha Oficial e pode ser baixada']},
 };
 const FIG_THEMES=['Quando o Pix cai','Segunda-feira, 6h da manhã','O Bobão dizendo que tá chegando','Eu ouvindo um áudio de 5 minutos','Quando alguém manda “precisamos conversar”','Eu no dia do pagamento','Eu dois dias depois do pagamento','Quando a mãe chama pelo nome completo','Eu fingindo que entendi','O grupo quando alguém some por 3 dias','Quando o professor fala “vai cair na prova”','Eu esperando o ônibus no sol','Quando a comida chega','Eu às 3h da manhã no celular','Quando o crush visualiza e não responde','Eu quando lembro que amanhã tem aula','O Wi-Fi caindo no meio da partida'];
 const RABISCO_WORDS=['Praia','Churrasco','Cinema','Shopping','Balada','Futebol','Piscina','Show','Aniversário','Karaokê','Pizza','Acampamento','Academia','Festa junina','Boliche','Sorveteria','Parque','Aeroporto','Casamento','Pescaria','Carnaval','Escola','Hospital','Supermercado','Ônibus','Zoológico','Pagode','Rodízio','Fazenda','Montanha-russa','Cachoeira','Feira','Padaria','Videogame','Natal'];
@@ -725,13 +747,13 @@ function nextMode(){
  const st=H.st;H.gen++;st.modeIdx++;
  if(st.modeIdx>=st.queue.length)return toRetro();
  st.mode=st.queue[st.modeIdx];st.screen='intro';st.m=null;H.priv={};
- setTimer(9,beginMode,false);
+ setTimer(12,beginMode,false);
 }
 function beginMode(){const st=H.st;st.screen='play';H.mx={part:activeIds()};H.priv={};H.gen++;MH[st.mode].start()}
 function endMode(){
  const st=H.st;clearTimer();H.gen++;H.priv={};st.deltas={};
  st.players.forEach(p=>{st.deltas[p.id]=p.score-(H.prev[p.id]||0);H.prev[p.id]=p.score});
- st.screen='scores';st.m=null;setTimer(12,nextMode,false);
+ st.screen='scores';st.m=null;setTimer(15,nextMode,false);
 }
 function backToLobby(){const st=H.st;clearTimer();H.gen++;st.screen='lobby';st.m=null;st.mode=null;st.retro=null;H.priv={};sysMsg(st.chat,'Voltamos pro lobby! Bora mais uma?','party')}
 function toRetro(){
@@ -759,7 +781,7 @@ MH.perfil={
  start(){
   const ids=shuffle(H.mx.part);const n=ids.length;H.mx.subs={};
   ids.forEach((id,i)=>{H.priv[id]={target:ids[(i+1)%n]}});
-  H.st.m={phase:'draw',done:[]};setTimer(75,MH.perfil.toVote);
+  H.st.m={phase:'draw',done:[]};setTimer(120,MH.perfil.toVote);
  },
  act(pid,a){
   const m=H.st.m,X=H.mx;
@@ -782,7 +804,7 @@ MH.perfil={
   if(!entries.length)return endMode();
   m.entries=shuffle(entries);m.voted=[];X.votes={};
   if(entries.length<2)return MH.perfil.results();
-  m.phase='vote';setTimer(25,MH.perfil.results);
+  m.phase='vote';setTimer(35,MH.perfil.results);
  },
  results(){
   const m=H.st.m,X=H.mx;const tally=m.entries.map(()=>0);
@@ -793,7 +815,7 @@ MH.perfil={
 };
 
 MH.figurinha={
- start(){H.st.m={phase:'draw',theme:pick(FIG_THEMES),done:[]};H.mx.entries=[];setTimer(100,MH.figurinha.toBracket)},
+ start(){H.st.m={phase:'draw',theme:pick(FIG_THEMES),done:[]};H.mx.entries=[];setTimer(150,MH.figurinha.toBracket)},
  act(pid,a){
   const m=H.st.m,X=H.mx;
   if(a.a==='draw'&&m.phase==='draw'&&!m.done.includes(pid)){
@@ -818,7 +840,7 @@ MH.figurinha={
   const a=X.round.shift(),b=X.round.shift();X.cur=[a,b];X.mn++;
   const remaining=X.round.length+X.next.length+2;
   H.st.m={phase:'match',view:'match',k:X.mn,theme:H.st.m.theme,done:[],a:a.img,b:b.img,label:remaining===2?'GRANDE FINAL':remaining<=4?'Semifinal':'Quartas de final',final:remaining===2,voted:[],counts:[0,0]};
-  setTimer(15,MH.figurinha.resolve);
+  setTimer(20,MH.figurinha.resolve);
  },
  resolve(){
   const X=H.mx,m=H.st.m;const c=m.counts;
@@ -846,7 +868,7 @@ MH.rabisco={
   const m=H.st.m;
   do{m.turn++}while(m.turn<m.order.length&&!(P_(m.order[m.turn])||{}).on);
   if(m.turn>=m.order.length)return MH.rabisco.toVote();
-  m.cur=m.order[m.turn];setTimer(25,MH.rabisco.nextTurn);
+  m.cur=m.order[m.turn];setTimer(35,MH.rabisco.nextTurn);
  },
  act(pid,a){
   const m=H.st.m,X=H.mx;
@@ -864,11 +886,11 @@ MH.rabisco={
    clearTimer();MH.rabisco.final(true,ok,String(a.text).slice(0,40));
   }
  },
- toVote(){const m=H.st.m;m.phase='vote';m.cur=null;m.voted=[];H.mx.votes={};setTimer(30,MH.rabisco.resolve)},
+ toVote(){const m=H.st.m;m.phase='vote';m.cur=null;m.voted=[];H.mx.votes={};setTimer(45,MH.rabisco.resolve)},
  resolve(){
   const m=H.st.m,X=H.mx;const tally={};Object.values(X.votes).forEach(t=>tally[t]=(tally[t]||0)+1);
   const mx=Math.max(0,...Object.values(tally));const caught=mx>0&&tally[X.carl]===mx;m.tally=tally;
-  if(caught&&(P_(X.carl)||{}).on){m.phase='guess';m.carl=X.carl;setTimer(25,()=>MH.rabisco.final(true,false,''))}
+  if(caught&&(P_(X.carl)||{}).on){m.phase='guess';m.carl=X.carl;setTimer(35,()=>MH.rabisco.final(true,false,''))}
   else MH.rabisco.final(caught,false,null);
  },
  final(caught,guessOk,guess){
@@ -889,7 +911,7 @@ MH.fofoca={
  assign(){
   const X=H.mx,m=H.st.m,s=m.step;m.kind=s%2===0?'text':'draw';m.k=s;m.done=[];H.priv={};
   for(let c=0;c<X.N;c++){const pid=X.ids[(c+s)%X.N];H.priv[pid]={chain:c,kind:m.kind,step:s,prev:s>0?X.chains[c][s-1]:null}}
-  setTimer(s===0?50:m.kind==='draw'?75:40,MH.fofoca.endStep);
+  setTimer(s===0?70:m.kind==='draw'?110:60,MH.fofoca.endStep);
  },
  act(pid,a){
   const m=H.st.m,X=H.mx,pr=H.priv[pid];
@@ -926,7 +948,7 @@ MH.quem={
  write(){
   const X=H.mx;X.ans={};const left=QUEM_QS.filter(x=>!X.used.includes(x));const q=pick(left.length?left:QUEM_QS);X.used.push(q);
   H.priv={};H.st.m={phase:'write',k:X.round,q,done:[],round:X.round+1,rounds:X.rounds};
-  setTimer(50,MH.quem.toGuess);
+  setTimer(75,MH.quem.toGuess);
  },
  act(pid,a){
   const m=H.st.m,X=H.mx;
@@ -944,7 +966,7 @@ MH.quem={
   if(list.length<2)return MH.quem.nextRound();
   X.list=list;X.guesses={};m.phase='guess';m.done=[];m.msgs=list.map((x,i)=>({i,text:x.text}));
   list.forEach((x,i)=>{H.priv[x.pid]={mine:i}});
-  setTimer(60,MH.quem.resolve);
+  setTimer(80,MH.quem.resolve);
  },
  resolve(){
   const X=H.mx,m=H.st.m;const right=X.list.map(()=>[]);
@@ -964,7 +986,7 @@ MH.quiz={
   const X=H.mx;X.i++;if(X.i>=X.qs.length)return endMode();
   const q=X.qs[X.i];const order=shuffle([0,1,2,3]);X.right=order.indexOf(0);X.ans={};X.t0=Date.now();
   H.st.m={phase:'q',k:X.i,n:X.i+1,total:X.qs.length,q:q[0],opts:order.map(i=>q[1][i]),done:[]};
-  setTimer(15,MH.quiz.reveal);
+  setTimer(20,MH.quiz.reveal);
  },
  act(pid,a){
   const m=H.st.m,X=H.mx;
@@ -974,7 +996,7 @@ MH.quiz={
   }
  },
  reveal(){
-  const m=H.st.m,X=H.mx;const dur=15000*H.st.settings.speed;const picks={},gain={},streak={};
+  const m=H.st.m,X=H.mx;const dur=20000*H.st.settings.speed;const picks={},gain={},streak={};
   X.part.forEach(pid=>{
    const an=X.ans[pid];if(an)picks[pid]=an.i;
    if(an&&an.i===X.right){
@@ -1002,7 +1024,7 @@ MH.impostor={
   do{m.turn++}while(m.turn<m.order.length&&!(P_(m.order[m.turn])||{}).on);
   if(m.turn>=m.order.length)return MH.impostor.toVote();
   m.cur=m.order[m.turn];
-  setTimer(30,()=>{m.clues.push({pid:m.cur,text:null});MH.impostor.next()});
+  setTimer(40,()=>{m.clues.push({pid:m.cur,text:null});MH.impostor.next()});
  },
  act(pid,a){
   const m=H.st.m,X=H.mx;
@@ -1019,11 +1041,11 @@ MH.impostor={
    clearTimer();MH.impostor.final(true,ok,String(a.text).slice(0,40));
   }
  },
- toVote(){const m=H.st.m;m.phase='vote';m.cur=null;m.voted=[];H.mx.votes={};setTimer(45,MH.impostor.resolve)},
+ toVote(){const m=H.st.m;m.phase='vote';m.cur=null;m.voted=[];H.mx.votes={};setTimer(60,MH.impostor.resolve)},
  resolve(){
   const m=H.st.m,X=H.mx;const tally={};Object.values(X.votes).forEach(t=>tally[t]=(tally[t]||0)+1);
   const mx=Math.max(0,...Object.values(tally));const caught=mx>0&&tally[X.imp]===mx;m.tally=tally;
-  if(caught&&(P_(X.imp)||{}).on){m.phase='guess';m.imp=X.imp;setTimer(25,()=>MH.impostor.final(true,false,''))}
+  if(caught&&(P_(X.imp)||{}).on){m.phase='guess';m.imp=X.imp;setTimer(35,()=>MH.impostor.final(true,false,''))}
   else MH.impostor.final(caught,false,null);
  },
  final(caught,guessOk,guess){
@@ -1044,16 +1066,16 @@ MH.verdade={
   if(X.r>=X.order.length)return endMode();
   const left=VERDADES.filter(q=>!X.used.includes(q));const qs=shuffle(left.length>=2?left:VERDADES).slice(0,2);X.used.push(...qs);
   H.st.m={phase:'pick',k:X.r,hot:X.order[X.r],n:X.r+1,total:X.order.length,qs};
-  setTimer(15,()=>MH.verdade.pickQ(rand(2)));
+  setTimer(25,()=>MH.verdade.pickQ(rand(2)));
  },
- pickQ(i){const m=H.st.m;m.q=m.qs[i];m.phase='answer';setTimer(60,()=>MH.verdade.amarelou(true))},
+ pickQ(i){const m=H.st.m;m.q=m.qs[i];m.phase='answer';setTimer(90,()=>MH.verdade.amarelou(true))},
  amarelou(timeout){const m=H.st.m;addPts(m.hot,-100);stat(m.hot,'amarelou');m.phase='result';m.amarelou=true;m.timeout=!!timeout;setTimer(6,MH.verdade.next,false)},
  act(pid,a){
   const m=H.st.m,X=H.mx;
   if(a.a==='pickq'&&m.phase==='pick'&&pid===m.hot&&(a.i===0||a.i===1)){clearTimer();MH.verdade.pickQ(a.i)}
   else if(a.a==='vanswer'&&m.phase==='answer'&&pid===m.hot){
    m.answer=String(a.text||'').trim().slice(0,240);m.voice=!m.answer;m.phase='judge';m.voted=[];X.jv={};
-   clearTimer();setTimer(20,MH.verdade.judged);
+   clearTimer();setTimer(30,MH.verdade.judged);
   } else if(a.a==='skipq'&&m.phase==='answer'&&pid===m.hot){clearTimer();MH.verdade.amarelou(false)}
   else if(a.a==='judge'&&m.phase==='judge'&&pid!==m.hot&&!m.voted.includes(pid)&&(a.v==='t'||a.v==='l')){
    X.jv[pid]=a.v;m.voted.push(pid);
@@ -1133,52 +1155,184 @@ function flood(ctx,S,x0,y0,hex){
  }
  ctx.putImageData(img,0,0);
 }
-function drawText(ctx,S,t,p,sz,color){
- ctx.save();let f=sz;const font=()=>ctx.font=`800 ${f}px "Baloo 2","Arial Black",sans-serif`;font();
+function drawText(ctx,S,t,p,sz,color,alpha=1){
+ ctx.save();ctx.globalAlpha=alpha;let f=sz;const font=()=>ctx.font=`800 ${f}px "Baloo 2","Arial Black",sans-serif`;font();
  while(ctx.measureText(t).width>S-24&&f>14){f-=2;font()}
  const w=ctx.measureText(t).width;const x=Math.min(Math.max(p[0],w/2+12),S-w/2-12);
  ctx.textAlign='center';ctx.textBaseline='middle';ctx.lineJoin='round';ctx.lineWidth=Math.max(5,f/5);
  ctx.strokeStyle=color==='#111111'?'#ffffff':'#111111';ctx.strokeText(t,x,p[1]);ctx.fillStyle=color;ctx.fillText(t,x,p[1]);ctx.restore();
 }
+/* Editor de desenho: pincel, marca-texto, spray, balde, borracha, conta-gotas,
+   linha, retângulo, círculo, texto, carimbo; tamanho, opacidade, espelho,
+   desfazer/refazer, cor livre e atalhos de teclado. */
 function DrawPad(root,opts){
  opts=opts||{};const S=480;
- const PAL=['#111111','#ffffff','#9e9e9e','#e63946','#ff8c42','#ffd23f','#7bd389','#25a244','#4cc9f0','#3a56d4','#9d4edd','#f72585','#8b5a2b','#ffc8a2'];
- let tool='pen',color='#111111',size=7,dirty=false,stampId=null,drawing=false,last=null;const hist=[];
- root.innerHTML=`<div class="pad"><div class="cwrap ${opts.transparent?'checker':''}"><canvas width="${S}" height="${S}"></canvas>${opts.circle?'<div class="cguide"></div>':''}</div>
+ const PAL=['#111111','#5c5c5c','#9e9e9e','#ffffff','#e63946','#ff6b6b','#ff8c42','#ffd23f','#f1dca7','#7bd389','#25a244','#4cc9f0','#3a56d4','#9d4edd','#f72585','#ffafcc','#8b5a2b','#ffc8a2'];
+ const TOOLS=[['pen','pencil','Pincel (B)'],['marker','marker','Marca-texto (M)'],['spray','spray','Spray (S)'],['fill','bucket','Balde de tinta (G)'],['eraser','eraser','Borracha (E)'],
+  ['picker','dropper','Conta-gotas: pega uma cor do desenho (I)'],['line','line','Linha (L) · Shift trava o ângulo'],['rect','rect','Retângulo (R) · Shift faz quadrado'],['ellipse','ellipse','Círculo (O) · Shift faz círculo perfeito']];
+ if(opts.text)TOOLS.push(['text','text','Texto (T)']);
+ const SHAPES=['line','rect','ellipse'];
+ let tool='pen',prevTool='pen',color='#111111',size=8,alpha=1,fillShape=false,mirror=false,dirty=false,stampId=null;
+ let drawing=false,pts=[],start=null,cur=null,last=null,sprayT=null,hover=null,shift=false;
+ const hist=[],redo=[];let recent=[];
+ root.innerHTML=`<div class="pad"><div class="cwrap ${opts.transparent?'checker':''}"><canvas class="main" width="${S}" height="${S}"></canvas><canvas class="ov" width="${S}" height="${S}"></canvas>${opts.circle?'<div class="cguide"></div>':''}</div>
  <div class="tools">
-  <div class="trow"><button data-tool="pen" class="on" title="Pincel">${spr('pencil')}</button><button data-tool="fill" title="Balde de tinta">${spr('bucket')}</button><button data-tool="eraser" title="Borracha">${spr('eraser')}</button>${opts.text?`<button data-tool="text" title="Texto">${spr('text')}</button>`:''}<button data-act="undo" title="Desfazer">${spr('undo')}</button><button data-act="clear" title="Limpar tudo">${spr('trash')}</button></div>
-  <div class="trow sizes">${[3,7,14,26].map((s,i)=>`<button data-size="${s}" class="${i===1?'on':''}" title="Tamanho"><i style="width:${Math.min(s,22)}px;height:${Math.min(s,22)}px"></i></button>`).join('')}</div>
-  <div class="trow colors">${PAL.map((c,i)=>`<button data-color="${c}" class="${i===0?'on':''}" style="background:${c}" title="Cor"></button>`).join('')}</div>
+  <div class="tgrid">${TOOLS.map(([id,ic,t],i)=>`<button data-tool="${id}" class="${i===0?'on':''}" title="${t}">${spr(ic)}</button>`).join('')}</div>
+  <div class="trow"><button class="tog" data-tog="fill" title="Retângulo e círculo saem preenchidos">${spr('rect')} Preencher</button><button class="tog" data-tog="mirror" title="Tudo que você desenha é espelhado">${spr('mirror')} Espelho</button></div>
+  <label class="slider"><span>Tamanho</span><input type="range" class="rsize" min="1" max="60" value="8"><b class="vsize">8</b></label>
+  <label class="slider"><span>Opacidade</span><input type="range" class="ralpha" min="10" max="100" step="5" value="100"><b class="valpha">100%</b></label>
+  <div class="trow colors">${PAL.map((c,i)=>`<button data-color="${c}" class="${i===0?'on':''}" style="background:${c}" title="${c}"></button>`).join('')}<label class="cpick" title="Escolher qualquer cor"><input type="color" value="#111111"></label></div>
+  <div class="trow colors recent" hidden></div>
+  <div class="trow acts"><button data-act="undo" title="Desfazer (Ctrl+Z)">${spr('undo')}</button><button data-act="redo" title="Refazer (Ctrl+Y)">${spr('redo')}</button><button data-act="clear" title="Limpar tudo">${spr('trash')}</button><span class="cur-swatch" title="Cor atual"></span></div>
   ${opts.text?`<div class="trow textrow" hidden><input class="tin" maxlength="28" placeholder="Texto da figurinha"><select class="tsz"><option value="34">Pequeno</option><option value="52" selected>Médio</option><option value="78">Grande</option></select><small class="muted">clique no desenho pra colocar o texto</small></div>`:''}
   ${opts.stamps&&opts.stamps.length?`<div class="trow stamps"><small class="muted" style="flex-basis:100%">Carimbar a cara da galera:</small>${opts.stamps.map(id=>`<button data-stamp="${id}" title="Carimbo">${imgTag(id)}</button>`).join('')}</div>`:''}
+  <small class="muted tip">Atalhos: Ctrl+Z desfaz · [ ] muda o tamanho · Shift deixa formas perfeitas</small>
  </div></div>`;
- const cv=$('canvas',root),ctx=cv.getContext('2d',{willReadFrequently:true}),tools=$('.tools',root);
+ const cv=$('canvas.main',root),ov=$('canvas.ov',root),tools=$('.tools',root);
+ const ctx=cv.getContext('2d',{willReadFrequently:true}),octx=ov.getContext('2d');
+ const tr=$('.textrow',tools),rsize=$('.rsize',tools),ralpha=$('.ralpha',tools),cpick=$('.cpick input',tools),recentRow=$('.recent',tools);
  const bg=()=>{if(opts.transparent)ctx.clearRect(0,0,S,S);else{ctx.fillStyle='#fff';ctx.fillRect(0,0,S,S)}};bg();
- const pushH=()=>{hist.push(ctx.getImageData(0,0,S,S));if(hist.length>30)hist.shift()};
+ const snap=()=>ctx.getImageData(0,0,S,S);
+ const pushH=()=>{hist.push(snap());if(hist.length>40)hist.shift();redo.length=0};
  const setOn=(sel,btn)=>$$(sel,tools).forEach(b=>b.classList.toggle('on',b===btn));
- const tr=$('.textrow',tools);
+ const mx=p=>[S-p[0],p[1]];
+ /* --- estado da UI --- */
+ function setTool(t,btn){
+  if(t!=='picker')prevTool=t;tool=t;if(t!=='stamp')stampId=null;
+  setOn('[data-tool],[data-stamp]',btn||$(`[data-tool="${t}"]`,tools));
+  if(tr)tr.hidden=t!=='text';if(t==='text')$('.tin',tools).focus({preventScroll:true});
+  renderOv();
+ }
+ function setColor(c,custom){
+  color=c;$('.cur-swatch',tools).style.background=c;
+  setOn('.colors [data-color]',$$(`.colors [data-color="${c}"]`,tools)[0]||null);
+  if(custom&&!PAL.includes(c)){recent=[c,...recent.filter(x=>x!==c)].slice(0,8);
+   recentRow.hidden=false;recentRow.innerHTML=`<small class="muted" style="flex-basis:100%">Cores recentes:</small>`+recent.map(x=>`<button data-color="${x}" style="background:${x}" title="${x}"></button>`).join('');
+   setOn('.colors [data-color]',$(`.recent [data-color="${c}"]`,tools))}
+  try{cpick.value=c}catch(_){}
+  if(tool==='eraser'||tool==='stamp')setTool('pen');
+ }
+ function setSize(n){size=Math.max(1,Math.min(60,Math.round(n)));rsize.value=size;$('.vsize',tools).textContent=size;renderOv()}
+ setColor(color);
  tools.onclick=e=>{
   const b=e.target.closest('button');if(!b)return;
-  if(b.dataset.tool){tool=b.dataset.tool;stampId=null;setOn('[data-tool],[data-stamp]',b);if(tr)tr.hidden=tool!=='text';if(tool==='text')$('.tin',tools).focus({preventScroll:true})}
-  else if(b.dataset.size){size=+b.dataset.size;setOn('[data-size]',b)}
-  else if(b.dataset.color){color=b.dataset.color;setOn('[data-color]',b);if(tool==='eraser'||tool==='stamp'){tool='pen';setOn('[data-tool],[data-stamp]',$('[data-tool=pen]',tools))}}
-  else if(b.dataset.stamp){tool='stamp';stampId=b.dataset.stamp;setOn('[data-tool],[data-stamp]',b);if(tr)tr.hidden=true}
-  else if(b.dataset.act==='undo'){if(hist.length)ctx.putImageData(hist.pop(),0,0)}
+  if(b.dataset.tool)setTool(b.dataset.tool,b);
+  else if(b.dataset.color)setColor(b.dataset.color);
+  else if(b.dataset.stamp){stampId=b.dataset.stamp;setTool('stamp',b)}
+  else if(b.dataset.tog==='fill'){fillShape=!fillShape;b.classList.toggle('on',fillShape)}
+  else if(b.dataset.tog==='mirror'){mirror=!mirror;b.classList.toggle('on',mirror);renderOv()}
+  else if(b.dataset.act==='undo')undo();
+  else if(b.dataset.act==='redo')redoF();
   else if(b.dataset.act==='clear'){pushH();bg();dirty=false}
  };
+ rsize.oninput=()=>setSize(+rsize.value);
+ ralpha.oninput=()=>{alpha=+ralpha.value/100;$('.valpha',tools).textContent=ralpha.value+'%'};
+ cpick.oninput=()=>setColor(cpick.value,true);
+ function undo(){if(!hist.length)return;redo.push(snap());ctx.putImageData(hist.pop(),0,0);dirty=true}
+ function redoF(){if(!redo.length)return;hist.push(snap());ctx.putImageData(redo.pop(),0,0);dirty=true}
+ /* --- desenho --- */
  const pos=e=>{const r=cv.getBoundingClientRect();return [(e.clientX-r.left)*S/r.width,(e.clientY-r.top)*S/r.height]};
- const line=(a,b)=>{ctx.save();if(tool==='eraser'){if(opts.transparent){ctx.globalCompositeOperation='destination-out';ctx.strokeStyle='#000'}else ctx.strokeStyle='#fff';ctx.lineWidth=size*2}else{ctx.strokeStyle=color;ctx.lineWidth=size}
-  ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0]+.01,b[1]);ctx.stroke();ctx.restore()};
+ const width=()=>tool==='marker'?size*2+4:tool==='eraser'?size*2:size;
+ const tAlpha=()=>tool==='marker'?alpha*0.4:alpha;
+ function smooth(c,ps){ // traço suave (curvas entre os pontos médios)
+  if(ps.length===1){c.beginPath();c.arc(ps[0][0],ps[0][1],c.lineWidth/2,0,Math.PI*2);c.fillStyle=c.strokeStyle;c.fill();return}
+  c.beginPath();c.moveTo(ps[0][0],ps[0][1]);
+  for(let i=1;i<ps.length-1;i++){const m=[(ps[i][0]+ps[i+1][0])/2,(ps[i][1]+ps[i+1][1])/2];c.quadraticCurveTo(ps[i][0],ps[i][1],m[0],m[1])}
+  const l=ps[ps.length-1];c.lineTo(l[0],l[1]);c.stroke();
+ }
+ function strokePath(c,ps){c.save();c.globalAlpha=tAlpha();c.strokeStyle=color;c.lineWidth=width();c.lineCap=tool==='marker'?'square':'round';c.lineJoin='round';smooth(c,ps);if(mirror)smooth(c,ps.map(mx));c.restore()}
+ function shapeEnd(a,b){
+  if(!shift)return b;let dx=b[0]-a[0],dy=b[1]-a[1];
+  if(tool==='line'){const ang=Math.round(Math.atan2(dy,dx)/(Math.PI/4))*(Math.PI/4),len=Math.hypot(dx,dy);return [a[0]+Math.cos(ang)*len,a[1]+Math.sin(ang)*len]}
+  const m=Math.max(Math.abs(dx),Math.abs(dy));return [a[0]+Math.sign(dx||1)*m,a[1]+Math.sign(dy||1)*m];
+ }
+ function drawShape(c,a,b0){
+  const b=shapeEnd(a,b0);c.save();c.globalAlpha=alpha;c.strokeStyle=c.fillStyle=color;c.lineWidth=size;c.lineCap='round';c.lineJoin='round';
+  const one=(p,q)=>{c.beginPath();
+   if(tool==='line'){c.moveTo(p[0],p[1]);c.lineTo(q[0],q[1]);c.stroke();return}
+   if(tool==='rect')c.rect(Math.min(p[0],q[0]),Math.min(p[1],q[1]),Math.abs(q[0]-p[0]),Math.abs(q[1]-p[1]));
+   else c.ellipse((p[0]+q[0])/2,(p[1]+q[1])/2,Math.abs(q[0]-p[0])/2,Math.abs(q[1]-p[1])/2,0,0,Math.PI*2);
+   fillShape?c.fill():c.stroke()};
+  one(a,b);if(mirror)one(mx(a),mx(b));c.restore();
+ }
+ function eraseSeg(a,b){
+  const one=(p,q)=>{ctx.save();if(opts.transparent){ctx.globalCompositeOperation='destination-out';ctx.strokeStyle='#000'}else ctx.strokeStyle='#fff';
+   ctx.lineWidth=size*2;ctx.lineCap='round';ctx.lineJoin='round';ctx.beginPath();ctx.moveTo(p[0],p[1]);ctx.lineTo(q[0]+.01,q[1]);ctx.stroke();ctx.restore()};
+  one(a,b);if(mirror)one(mx(a),mx(b));
+ }
+ function sprayAt(p){
+  const r=size*1.5+4,n=10+Math.round(size/2);ctx.save();ctx.globalAlpha=alpha;ctx.fillStyle=color;
+  const dot=q=>{for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,d=Math.sqrt(Math.random())*r;ctx.fillRect(q[0]+Math.cos(a)*d,q[1]+Math.sin(a)*d,1.8,1.8)}};
+  dot(p);if(mirror)dot(mx(p));ctx.restore();dirty=true;
+ }
+ function pickColor(p){
+  const d=ctx.getImageData(Math.max(0,Math.min(S-1,p[0]|0)),Math.max(0,Math.min(S-1,p[1]|0)),1,1).data;
+  if(d[3]<20){toast('Aqui não tem cor pra pegar');return}
+  setColor('#'+[d[0],d[1],d[2]].map(x=>x.toString(16).padStart(2,'0')).join(''),true);setTool(prevTool);
+ }
+ /* camada de prévia: traço em andamento, forma sendo arrastada, cursor do pincel */
+ function renderOv(){
+  octx.clearRect(0,0,S,S);
+  if(mirror){octx.save();octx.strokeStyle='#4cc9f0';octx.globalAlpha=.6;octx.setLineDash([6,6]);octx.lineWidth=1.5;octx.beginPath();octx.moveTo(S/2,0);octx.lineTo(S/2,S);octx.stroke();octx.restore()}
+  if(drawing&&(tool==='pen'||tool==='marker'))strokePath(octx,pts);
+  if(drawing&&SHAPES.includes(tool))drawShape(octx,start,cur);
+  if(!hover)return;
+  octx.save();
+  if(['pen','marker','eraser','spray'].includes(tool)){
+   const r=tool==='spray'?size*1.5+4:width()/2;
+   const ring=q=>{octx.beginPath();octx.arc(q[0],q[1],Math.max(2,r),0,Math.PI*2);octx.lineWidth=3;octx.strokeStyle='#fff';octx.stroke();octx.lineWidth=1.3;octx.strokeStyle='#111';octx.stroke()};
+   ring(hover);if(mirror)ring(mx(hover));
+  } else if(tool==='text'&&!drawing){const t=($('.tin',tools).value||'').trim();if(t)drawText(octx,S,t,hover,+$('.tsz',tools).value,color,.45)}
+  else if(tool==='stamp'){octx.beginPath();octx.arc(hover[0],hover[1],72,0,Math.PI*2);octx.setLineDash([6,5]);octx.lineWidth=2;octx.strokeStyle='#111';octx.stroke()}
+  octx.restore();
+ }
  cv.onpointerdown=e=>{
-  e.preventDefault();const p=pos(e);
+  e.preventDefault();const p=pos(e);shift=e.shiftKey;hover=p;
   if(tool==='fill'){pushH();flood(ctx,S,p[0],p[1],color);dirty=true;return}
-  if(tool==='text'){const t=($('.tin',tools).value||'').trim();if(!t){toast('Digite o texto primeiro');$('.tin',tools).focus({preventScroll:true});return}pushH();drawText(ctx,S,t,p,+$('.tsz',tools).value,color);dirty=true;return}
+  if(tool==='picker'){pickColor(p);return}
+  if(tool==='text'){const t=($('.tin',tools).value||'').trim();if(!t){toast('Digite o texto primeiro');$('.tin',tools).focus({preventScroll:true});return}pushH();drawText(ctx,S,t,p,+$('.tsz',tools).value,color,alpha);dirty=true;return}
   if(tool==='stamp'){const im=new Image();im.onload=()=>{pushH();const r=72;ctx.save();ctx.beginPath();ctx.arc(p[0],p[1],r,0,Math.PI*2);ctx.clip();ctx.fillStyle='#fff';ctx.fill();ctx.drawImage(im,p[0]-r,p[1]-r,r*2,r*2);ctx.restore();dirty=true};im.src=IMG[stampId]||BLANK;return}
-  pushH();drawing=true;last=p;try{cv.setPointerCapture(e.pointerId)}catch(_){}line(p,p);if(tool!=='eraser')dirty=true;
+  pushH();drawing=true;try{cv.setPointerCapture(e.pointerId)}catch(_){}
+  if(tool==='pen'||tool==='marker')pts=[p];
+  else if(tool==='eraser'){last=p;eraseSeg(p,p)}
+  else if(tool==='spray'){last=p;sprayAt(p);sprayT=setInterval(()=>sprayAt(last),35)}
+  else if(SHAPES.includes(tool)){start=p;cur=p}
+  renderOv();
  };
- cv.onpointermove=e=>{if(!drawing)return;const p=pos(e);line(last,p);last=p};
- cv.onpointerup=cv.onpointercancel=()=>{drawing=false};
- return {dirty:()=>dirty,getData:()=>toUrl(opts.transparent?stickerize(cv):cv)};
+ cv.onpointermove=e=>{
+  const p=pos(e);hover=p;shift=e.shiftKey;
+  if(drawing){
+   if(tool==='pen'||tool==='marker'){const l=pts[pts.length-1];if(Math.hypot(p[0]-l[0],p[1]-l[1])>1.5)pts.push(p)}
+   else if(tool==='eraser'){eraseSeg(last,p);last=p}
+   else if(tool==='spray')last=p;
+   else if(SHAPES.includes(tool))cur=p;
+  }
+  renderOv();
+ };
+ const finish=()=>{
+  if(!drawing)return;drawing=false;clearInterval(sprayT);
+  if(tool==='pen'||tool==='marker'){strokePath(ctx,pts);dirty=true}
+  else if(SHAPES.includes(tool)){if(Math.hypot(cur[0]-start[0],cur[1]-start[1])>2){drawShape(ctx,start,cur);dirty=true}else hist.pop()}
+  else dirty=true;
+  pts=[];renderOv();
+ };
+ cv.onpointerup=cv.onpointercancel=finish;
+ cv.onpointerleave=()=>{if(!drawing){hover=null;renderOv()}};
+ /* atalhos de teclado (somem sozinhos quando o editor sai da tela) */
+ const keys={b:'pen',m:'marker',s:'spray',g:'fill',e:'eraser',i:'picker',l:'line',r:'rect',o:'ellipse',t:'text'};
+ const onKey=e=>{
+  if(!document.body.contains(cv)){document.removeEventListener('keydown',onKey);return}
+  const tg=e.target;if(tg&&(tg.tagName==='INPUT'||tg.tagName==='TEXTAREA'||tg.tagName==='SELECT'))return;
+  const k=e.key.toLowerCase();
+  if((e.ctrlKey||e.metaKey)&&k==='z'){e.preventDefault();e.shiftKey?redoF():undo();return}
+  if((e.ctrlKey||e.metaKey)&&k==='y'){e.preventDefault();redoF();return}
+  if(e.ctrlKey||e.metaKey||e.altKey)return;
+  if(k==='['){setSize(size-(size>10?4:1));return}
+  if(k===']'){setSize(size+(size>=10?4:1));return}
+  if(keys[k]&&$(`[data-tool="${keys[k]}"]`,tools))setTool(keys[k]);
+ };
+ document.addEventListener('keydown',onKey);
+ return {dirty:()=>dirty,getData:()=>{if(drawing)finish();return toUrl(opts.transparent?stickerize(cv):cv)}};
 }
 /* ---------------- canvas: traços coletivos (Rabisco) ---------------- */
 function paintStrokes(ctx,S,strokes,extra){
