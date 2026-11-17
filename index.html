@@ -265,6 +265,13 @@ main{padding:18px 16px;max-width:1300px;margin:0 auto}
 const PREFIX='bora-resenhar-v1-';
 const MIN_PLAYERS=3, MAX_PLAYERS=8;
 const PEER_OPTS={debug:1,config:{iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'},{urls:'stun:global.stun.twilio.com:3478'}]}};
+/* Conexão reserva: quando a conexão direta (WebRTC) é bloqueada pela rede,
+   as mensagens passam por servidores MQTT públicos (sem cadastro). */
+const BROKERS=['wss://broker.emqx.io:8084/mqtt','wss://broker.hivemq.com:8884/mqtt','wss://test.mosquitto.org:8081/mqtt'];
+const RT=code=>'bora-resenhar/v1/'+code;
+let mqttP=null;
+function loadMqtt(){if(window.mqtt)return Promise.resolve();if(!mqttP)mqttP=new Promise((res,rej)=>{const s=document.createElement('script');s.src='https://unpkg.com/mqtt@5.10.3/dist/mqtt.min.js';s.onload=res;s.onerror=()=>{mqttP=null;rej(new Error('mqtt'))};document.head.append(s)});return mqttP}
+const rid=()=>Math.random().toString(36).slice(2,10);
 const COLORS_P=['#ff5c8a','#ffd23f','#25d366','#4cc9f0','#b388ff','#ff8c42','#06d6a0','#f78bd8'];
 const REACTS=['laugh','fire','shock','clap','skull','clown','heart','carlao'];
 
@@ -409,33 +416,86 @@ const CUR={key:null,scr:null};
    ========================================================= */
 function hostCreate(name){ME.name=name;NET.isHost=true;tryHost(0)}
 function tryHost(attempt){
- const code=genCode();const peer=new Peer(PREFIX+code,PEER_OPTS);NET.peer=peer;
- peer.on('open',()=>{NET.code=code;hostInit(code)});
+ const code=genCode();let inited=false,peer=null;
+ const init=()=>{if(inited)return;inited=true;NET.code=code;hostInit(code);hostRelayStart(code)};
+ try{peer=new Peer(PREFIX+code,PEER_OPTS)}catch(e){init();return}
+ NET.peer=peer;
+ peer.on('open',init);
  peer.on('connection',conn=>{conn.on('data',d=>hostData(conn,d));conn.on('close',()=>hostClose(conn));conn.on('error',()=>hostClose(conn))});
  peer.on('error',e=>{
-  if(e.type==='unavailable-id'&&attempt<5){peer.destroy();tryHost(attempt+1)}
-  else if(!H.st){homeStatus('Não consegui criar a sala ('+e.type+'). Confira sua internet e tente de novo.');const b=$('#hcreate');if(b)b.disabled=false}
+  if(e.type==='unavailable-id'&&!inited&&attempt<5){peer.destroy();tryHost(attempt+1)}
+  else if(!inited)init(); // sem conexão direta: a sala funciona só pela reserva
   else console.warn('peer error',e.type);
  });
  peer.on('disconnected',()=>{setTimeout(()=>{try{if(!peer.destroyed)peer.reconnect()}catch(e){}},1500)});
+ setTimeout(()=>{if(!inited)init()},8000);
+}
+/* host: escuta a sala nos servidores reserva */
+const RELAY={clients:[],conns:{}};
+async function hostRelayStart(code){
+ try{await loadMqtt()}catch(e){console.warn('reserva indisponível');return}
+ BROKERS.forEach((url,bi)=>{
+  const c=mqtt.connect(url,{clientId:'brh'+rid(),connectTimeout:8000,reconnectPeriod:3000,keepalive:30});
+  c.on('connect',()=>c.subscribe(RT(code)+'/h'));
+  c.on('error',()=>{});
+  c.on('message',(t,p)=>{
+   let m;try{m=JSON.parse(p.toString())}catch(e){return}
+   if(!m||!m.f||!m.d||typeof m.d!=='object')return;
+   const pid=String(m.f).slice(0,24),key=pid+'@'+bi;
+   let conn=RELAY.conns[key];
+   if(!conn){conn=RELAY.conns[key]={pid:null,open:true,relay:true,send(d){if(c.connected)c.publish(RT(code)+'/c/'+pid,JSON.stringify(d))},close(){this.open=false}}}
+   if(m.d.t==='join')conn.open=true;
+   if(!conn.open)return;
+   hostData(conn,m.d);
+   if(m.d.t==='ping')conn.send({t:'pong'});
+  });
+  RELAY.clients.push(c);
+ });
 }
 function clientJoin(code,name){
  ME.name=name;NET.isHost=false;NET.code=code;homeStatus('Conectando…');
  try{NET.peer&&!NET.peer.destroyed&&NET.peer.destroy()}catch(e){}
- const peer=new Peer(PEER_OPTS);NET.peer=peer;let opened=false;
- const to=setTimeout(()=>{if(!opened){homeStatus('Não consegui conectar. Confira o código e se o anfitrião está com a sala aberta.');if(V)lostConnection()}},15000);
+ try{NET.relay&&NET.relay.end(true)}catch(e){}NET.relay=null;
+ let done=false;
+ const toRelay=()=>{if(done)return;done=true;try{NET.peer&&NET.peer.destroy()}catch(e){}relayJoin(code)};
+ if(new URLSearchParams(location.search).has('reserva')||typeof Peer==='undefined')return toRelay();
+ let peer;try{peer=new Peer(PEER_OPTS)}catch(e){return toRelay()}
+ NET.peer=peer;
+ const to=setTimeout(toRelay,7000);
  peer.on('open',()=>{
-  const conn=peer.connect(PREFIX+code,{reliable:true});NET.conn=conn;
-  conn.on('open',()=>{opened=true;clearTimeout(to);conn.send({t:'join',pid:ME.pid,name:ME.name});store.set('br_join',code);hideOverlay()});
+  const conn=peer.connect(PREFIX+code,{reliable:true});
+  conn.on('open',()=>{if(done){try{conn.close()}catch(e){}return}done=true;clearTimeout(to);NET.conn=conn;conn.send({t:'join',pid:ME.pid,name:ME.name});store.set('br_join',code);hideOverlay()});
   conn.on('data',onClientData);
   conn.on('close',()=>{if(NET.conn===conn)lostConnection()});
  });
- peer.on('error',e=>{
-  if(e.type==='peer-unavailable'){clearTimeout(to);if(V)lostConnection();else homeStatus('Sala não encontrada. Confira o código.')}
-  else if(!opened)homeStatus('Erro de conexão: '+e.type);
- });
+ peer.on('error',()=>{if(!done){clearTimeout(to);toRelay()}}); // qualquer erro: tenta a reserva
 }
-setInterval(()=>{if(!NET.isHost&&NET.conn&&NET.conn.open){try{NET.conn.send({t:'ping'})}catch(e){}}},3000);
+/* cliente: conexão reserva (pega o primeiro servidor que a rede deixar) */
+let lastHost=0;
+async function relayJoin(code){
+ homeStatus('Conexão direta bloqueada pela rede… tentando a conexão reserva');
+ try{await loadMqtt()}catch(e){homeStatus('Não consegui conectar de nenhum jeito. Confira a internet.');if(V)lostConnection();return}
+ let chosen=null,got=false;
+ const cs=BROKERS.map(url=>{const c=mqtt.connect(url,{clientId:'brc'+rid(),connectTimeout:8000,reconnectPeriod:0,keepalive:30});c.on('error',()=>{});return c});
+ const fail=setTimeout(()=>{if(!chosen){cs.forEach(c=>{try{c.end(true)}catch(e){}});homeStatus('Não consegui conectar de nenhum jeito. Confira a internet.');if(V)lostConnection()}},11000);
+ cs.forEach(c=>c.on('connect',()=>{
+  if(chosen){if(c!==chosen)c.end(true);return}
+  chosen=c;clearTimeout(fail);cs.forEach(o=>{if(o!==c)try{o.end(true)}catch(e){}});
+  c.options.reconnectPeriod=2000;NET.relay=c;
+  c.on('message',(t,p)=>{let d;try{d=JSON.parse(p.toString())}catch(e){return}lastHost=Date.now();
+   if(d.t==='state'&&!got){got=true;store.set('br_join',code);hideOverlay()}
+   onClientData(d)});
+  c.subscribe(RT(code)+'/c/'+ME.pid,()=>{
+   const conn={open:true,relay:true,send(d){if(c.connected)c.publish(RT(code)+'/h',JSON.stringify({f:ME.pid,d}))},close(){this.open=false;try{c.end(true)}catch(e){}}};
+   NET.conn=conn;lastHost=Date.now();conn.send({t:'join',pid:ME.pid,name:ME.name});
+   setTimeout(()=>{if(!got&&NET.conn===conn){homeStatus('Sala não encontrada. Confira o código e se o anfitrião está com a sala aberta.');if(V)lostConnection()}},9000);
+  });
+ }));
+}
+setInterval(()=>{
+ if(!NET.isHost&&NET.conn&&NET.conn.open){try{NET.conn.send({t:'ping'})}catch(e){}
+  if(NET.conn.relay&&V&&Date.now()-lastHost>15000){NET.conn.open=false;lostConnection()}}
+},3000);
 function lostConnection(){
  const o=showOverlay(`${spr('skull','s4')}<h2>Caiu a conexão com a sala</h2><p class="muted">Pode ser a internet ou o anfitrião fechou o jogo.</p><button class="btn big" id="rcBtn">Reconectar</button><button class="btn ghost" id="outBtn">Sair</button>`);
  $('#rcBtn',o).onclick=()=>{$('#rcBtn',o).disabled=true;$('#rcBtn',o).textContent='Conectando…';clientJoin(NET.code,ME.name)};
@@ -525,6 +585,7 @@ function hostJoin(conn,d){
   p={id:pid,name:cleanName(d.name),color:COLORS_P.find(c=>!used.includes(c))||pick(COLORS_P),avatar:null,score:0,on:true};
   st.players.push(p);sysMsg(st.chat,`${p.name} entrou no grupo`,'users');
  } else p.on=true;
+ p.relay=!!conn.relay;
  const old=H.conns[pid];H.conns[pid]=conn;conn.pid=pid;H.lastSeen[pid]=Date.now();
  if(old&&old!==conn){try{old.close()}catch(e){}}
  for(const [id,data] of Object.entries(H.images))try{conn.send({t:'img',id,d:data})}catch(e){}
@@ -1071,7 +1132,7 @@ SCR.home=()=>({mount(main){
  <div class="modeprev">${MODE_ORDER.map(id=>`<div class="mp">${spr(MODE_ICON[id],'s2')}${MODES[id].n}</div>`).join('')}</div>
  <p class="muted small">De 4 a 8 amigos · cada um no seu PC ou celular · sem instalar nada</p></div>`;
  const getName=()=>{const n=$('#hname').value.trim();if(!n){homeStatus('Coloca seu nome primeiro');$('#hname').focus();return null}store.lset('br_name',n);return n};
- const ready=()=>{if(typeof Peer==='undefined'){homeStatus('Não carregou a parte de conexão. Precisa de internet! Recarregue a página.');return false}return true};
+ const ready=()=>true; // sem PeerJS, o jogo usa direto a conexão reserva
  $('#hcreate').onclick=()=>{const n=getName();if(!n||!ready())return;homeStatus('Criando sala…');$('#hcreate').disabled=true;hostCreate(n)};
  const join=()=>{const n=getName();if(!n||!ready())return;const c=$('#hcode').value.trim().toUpperCase();if(c.length<5)return homeStatus('Digite o código da sala (5 letras).');clientJoin(c,n)};
  $('#hjoin').onclick=join;$('#hcode').onkeydown=e=>{if(e.key==='Enter')join()};
@@ -1101,7 +1162,7 @@ SCR.lobby=()=>{let chat;return{
  update(v){
   const s=v.s,host=isHostMe();
   setHTML($('#pcount'),`(${s.players.length}/${MAX_PLAYERS})`);
-  setHTML($('#plist'),s.players.map(p=>`<div class="pl ${p.on?'':'off'}">${av(p,'sm')}<b>${esc(p.name)}</b>${p.id===s.hostId?spr('crown'):''}${p.id===ME.pid?' <small class="muted">(você)</small>':''}${p.on?'':' <small class="muted">offline</small>'}</div>`).join(''));
+  setHTML($('#plist'),s.players.map(p=>`<div class="pl ${p.on?'':'off'}">${av(p,'sm')}<b>${esc(p.name)}</b>${p.id===s.hostId?spr('crown'):''}${p.id===ME.pid?' <small class="muted">(você)</small>':''}${p.on?'':' <small class="muted">offline</small>'}${p.on&&p.relay?' <small class="muted" title="Entrou pela conexão reserva">(reserva)</small>':''}</div>`).join(''));
   setHTML($('#modehint'),host?'Clique pra ligar/desligar cada modo. Eles rolam nessa ordem.':'O anfitrião escolhe os modos.');
   setHTML($('#modes'),MODE_ORDER.map(id=>{const M=MODES[id],on=s.settings.modes.includes(id);return `<button class="mcard ${on?'on':''}" data-id="${id}" ${host?'':'disabled'}><span class="chk">${spr(on?'check':'box','s2')}</span>${mtile(id)}<span class="mt2">${M.n}</span><span class="md">${M.d}</span><span class="md">~${M.min} min</span></button>`}).join(''));
   const total=s.settings.modes.reduce((a,id)=>a+MODES[id].min,0);const dur=`<span class="muted small">Duração estimada: ~${Math.max(1,Math.round(total*s.settings.speed))} min</span>`;
