@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Bora Resenhar?</title>
-<meta name="description" content="O jogo do grupo de amigos: marcar rolê, desenhar, fofocar e descobrir quem é o Bobão.">
+<meta name="description" content="O jogo do grupo de amigos: quiz, impostor, verdade ou verdade, desenhar, fofocar e descobrir quem é o Bobão.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
@@ -228,6 +228,42 @@ main{padding:18px 16px;max-width:1300px;margin:0 auto}
 .award .spr{width:54px;height:54px;filter:drop-shadow(0 3px 0 #0007)}
 .award .at{font-weight:800;color:var(--yel)}.award small{color:var(--mut)}
 .offc{display:flex;flex-direction:column;align-items:center;gap:8px}
+/* quiz */
+.qq{max-width:820px}
+.qgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:min(820px,94vw)}
+@media(max-width:640px){.qgrid{grid-template-columns:1fr}}
+.qopt{background:var(--qc);color:#fff;border:3px solid var(--ink);border-radius:18px;padding:14px 16px;font-weight:800;font-size:1.1rem;display:flex;align-items:center;gap:12px;text-align:left;box-shadow:0 5px 0 #0008;min-height:74px;transition:transform .08s,opacity .2s}
+button.qopt:hover:not(:disabled){transform:translateY(-2px)}
+.qopt:disabled{cursor:default}
+.qopt.on{outline:4px solid #fff;outline-offset:2px}
+.qopt.dim{opacity:.35}
+.qopt.right{outline:4px solid var(--yel);outline-offset:2px;transform:scale(1.03)}
+.ql{width:36px;height:36px;border-radius:10px;background:#0004;display:flex;align-items:center;justify-content:center;flex:none;font-family:'Baloo 2',sans-serif}
+.ql .spr{width:28px;height:28px}
+.qwho{margin-left:auto;display:flex;gap:2px}
+.qres{font-family:'Baloo 2',sans-serif;font-size:1.6rem;font-weight:800;display:flex;align-items:center;gap:8px;padding:10px 22px;border-radius:16px;border:2px solid}
+.qres.ok{background:#123326;border-color:var(--green)}.qres.bad{background:#3a1218;border-color:var(--red)}
+/* impostor */
+.clues{display:flex;flex-direction:column;gap:8px}
+.crow{display:flex;align-items:center;gap:10px;background:var(--panel);border:2px solid var(--line);border-radius:14px;padding:8px 12px;text-align:left}
+.crow.cur{border-color:var(--yel)}
+.crow b{min-width:90px}
+.cchips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{background:var(--panel2);border:2px solid var(--ink);border-radius:99px;padding:3px 12px;font-weight:800;box-shadow:0 2px 0 #0006}
+.chip.off{opacity:.45;font-weight:600}
+.chip.typing{background:transparent;border-style:dashed;border-color:var(--mut);color:var(--mut);box-shadow:none;animation:pulse .8s infinite alternate}
+/* verdade */
+.hotseat{display:flex;flex-direction:column;align-items:center;gap:8px}
+.vcards{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+.vcard{width:min(340px,90vw);background:linear-gradient(135deg,#0d3b33,#14212a);border:3px solid #06d6a0;border-radius:20px;padding:20px;font-weight:800;font-size:1.1rem;display:flex;flex-direction:column;align-items:center;gap:10px;box-shadow:0 5px 0 #0008;transition:transform .1s}
+.vcard:hover:not(:disabled){transform:translateY(-3px) rotate(-1deg)}
+.vcard:disabled{cursor:default}
+.quote.big{font-size:1.5rem;display:flex;align-items:center;gap:10px}
+.answer{font-family:'Baloo 2',sans-serif;font-size:1.8rem;font-weight:800;background:var(--panel);border:3px solid var(--yel);border-radius:18px;padding:14px 24px;max-width:760px;display:flex;align-items:center;gap:10px;box-shadow:0 5px 0 #0008}
+.verdict{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
+.vside{background:var(--panel);border:3px solid;border-radius:18px;padding:14px 20px;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:200px}
+.vside.ok{border-color:#06d6a0}.vside.bad{border-color:var(--pink)}
+.vside span{display:flex;gap:3px;flex-wrap:wrap;justify-content:center}
 /* fx */
 #fx{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden}
 .fl{position:absolute;bottom:-80px;display:flex;flex-direction:column;align-items:center;animation:rise 2.8s ease-out forwards}
@@ -344,8 +380,12 @@ const SPR={
  undo:`<path d="M10.5 6.5L4.5 12.5l6 6" fill="none" stroke="#fff" stroke-width="3.2"/><path d="M5.5 12.5H19a7 7 0 0 1 0 14h-5" fill="none" stroke="#fff" stroke-width="3.2"/>`,
  trash:`<path d="M7 9h18l-1.6 18.5H8.6z" fill="#ff5c8a"/><path d="M4.5 9h23M12.5 9V5h7v4" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M13 13.5v9.5M19 13.5v9.5" fill="none" stroke-width="1.8"/>`,
  vacuum:`<path d="M6 22c0-6 4.5-10 10-10s10 4 10 10" fill="#8ea0aa"/><path d="M10 12l-3-6M22 12l3-6" fill="none" stroke-width="2.4"/><circle cx="12.5" cy="18" r="1.6" fill="#15191d" ${N}/><circle cx="19.5" cy="18" r="1.6" fill="#15191d" ${N}/><path d="M6 22l-2 5M11 23l-1 5M21 23l1 5M26 22l2 5" fill="none" stroke-width="2.2"/>`,
+ quiz:`<path d="M18.5 2.5L6 18h8.5l-2.8 11.5L26 13h-8.6z" fill="#ffd23f"/><path d="M16.5 6.5l-6 8" fill="none" stroke="#fff" stroke-width="1.8" opacity=".7"/>`,
+ impostor:`<path d="M16 3C9.5 3 6 8.5 6 15v13.5h20V15C26 8.5 22.5 3 16 3z" fill="#5b3a8c"/><path d="M9.5 16.5c0-4.6 2.9-7.8 6.5-7.8s6.5 3.2 6.5 7.8v5.5h-13z" fill="#15191d"/><path d="M11 15.6l3.4 1.4M21 15.6l-3.4 1.4" fill="none" stroke="#fff" stroke-width="1.5"/><ellipse cx="12.9" cy="18.6" rx="1.7" ry="1.2" fill="#fff" ${N}/><ellipse cx="19.1" cy="18.6" rx="1.7" ry="1.2" fill="#fff" ${N}/>`,
+ angel:`<ellipse cx="16" cy="5" rx="8" ry="2.7" fill="none" stroke-width="4.4"/><ellipse cx="16" cy="5" rx="8" ry="2.7" fill="none" stroke="#ffd23f" stroke-width="2.2"/><circle cx="16" cy="18.5" r="11.3" fill="#ffd23f"/><path d="M10 17q2-2.6 4 0M18 17q2-2.6 4 0" fill="none"/><path d="M11.5 22q4.5 3.6 9 0" fill="none"/><circle cx="8.6" cy="21" r="1.7" fill="#ff8fa3" ${N}/><circle cx="23.4" cy="21" r="1.7" fill="#ff8fa3" ${N}/>`,
+ liar:`<circle cx="13.5" cy="16" r="11.3" fill="#ffd23f"/><path d="M21.5 15h8a1.7 1.7 0 0 1 0 3.4h-8z" fill="#ff8c42"/><circle cx="10.8" cy="13.2" r="1.8" fill="#15191d" ${N}/><circle cx="17.6" cy="13.2" r="1.8" fill="#15191d" ${N}/><path d="M7.5 9.6l3.2-1M20.5 9.6l-3.2-1" fill="none" stroke-width="1.7"/><path d="M8.8 21.5q4 2.4 8-.6" fill="none"/>`,
 };
-const MODE_ICON={perfil:'perfil',marcar:'marcar',rabisco:'rabisco',fofoca:'fofoca',quem:'quem',figurinha:'figurinha'};
+const MODE_ICON={perfil:'perfil',quiz:'quiz',impostor:'impostor',rabisco:'rabisco',fofoca:'fofoca',quem:'quem',verdade:'angel',figurinha:'figurinha'};
 function spr(n,cls=''){return `<svg class="spr ${cls}" aria-hidden="true"><use href="#s-${n}"></use></svg>`}
 (function injectSprites(){
  const wrap=v=>`<g stroke="#15191d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">${v}</g>`;
@@ -355,12 +395,16 @@ function spr(n,cls=''){return `<svg class="spr ${cls}" aria-hidden="true"><use h
 })();
 
 /* ---------------- conteúdo ---------------- */
-const MODE_ORDER=['perfil','marcar','rabisco','fofoca','quem','figurinha'];
+const MODE_ORDER=['perfil','quiz','impostor','rabisco','fofoca','quem','verdade','figurinha'];
 const MODES={
  perfil:{n:'Foto de Perfil',c:'#ff5c8a',min:2,d:'Cada um desenha a foto de perfil de um amigo. O desenho vira o avatar dele no jogo!',
   rules:['Você recebe o nome de um amigo em segredo','Tem 75s pra desenhar a foto de perfil dele','A galera vota na foto mais engraçada (+100 por voto)','Quem desenhou quem só é revelado no final']},
- marcar:{n:'Bora Marcar?',c:'#ff8c42',min:4,d:'Fechem o rolê pelo chat. Cada um tem restrições secretas… e o Bobão quer furar tudo.',
-  rules:['Cada um recebe restrições secretas (ex.: “não pode no Domingo”)','Conversem no chat e votem nas 3 enquetes: a opção mais votada vence','Um de vocês é o BOBÃO: ele quer que alguém fique de fora do rolê','Eventos surpresa: a Mãe entra no grupo, bateria em 1%, áudio da tia…','No final, votem em quem é o Bobão']},
+ quiz:{n:'Quiz Relâmpago',c:'#ff8c42',min:3,d:'Perguntas e respostas valendo pontos. Quem acerta mais rápido ganha mais!',
+  rules:['8 perguntas de conhecimentos gerais, com 4 alternativas cada','15 segundos por pergunta','Acertou? Quanto mais rápido, mais pontos (até 1000)','Acertos seguidos dão bônus de sequência']},
+ impostor:{n:'Impostor',c:'#ff4d4d',min:4,d:'Todo mundo recebe a mesma palavra, menos o impostor. Cada um dá uma dica… e o impostor tem que disfarçar.',
+  rules:['Todo mundo vê a palavra secreta, menos o IMPOSTOR (ele só sabe a categoria)','Na sua vez, mande UMA palavra de dica (sem falar a palavra!)','Duas rodadas de dicas, depois votem em quem é o impostor','Se pegarem o impostor, ele ainda vence se adivinhar a palavra']},
+ verdade:{n:'Verdade ou Verdade',c:'#06d6a0',min:6,d:'Cada um vai pra berlinda e tem que responder uma pergunta. Aqui não tem desafio, só verdade!',
+  rules:['Na sua vez, você escolhe 1 de 2 perguntas','Responda digitando ou em voz alta na call','A galera vota se acredita ou se você mentiu (+100 por cada “acredito”)','Amarelou e pulou a pergunta? -100 pontos']},
  rabisco:{n:'Rabisco do Bobão',c:'#ffd23f',min:3,d:'Um traço por vez num desenho coletivo. Todo mundo sabe o tema… menos o Bobão.',
   rules:['Todo mundo recebe o tema secreto, menos o Bobão','Cada um faz UM traço por vez, em rodízio','Depois, votem em quem é o Bobão','Se pegarem o Bobão, ele ainda vence se acertar o tema!']},
  fofoca:{n:'Fofoca em Cadeia',c:'#b388ff',min:5,d:'Telefone sem fio desenhado: a fofoca vira desenho, que vira texto, que vira desenho…',
@@ -374,16 +418,72 @@ const FIG_THEMES=['Quando o Pix cai','Segunda-feira, 6h da manhã','O Bobão diz
 const RABISCO_WORDS=['Praia','Churrasco','Cinema','Shopping','Balada','Futebol','Piscina','Show','Aniversário','Karaokê','Pizza','Acampamento','Academia','Festa junina','Boliche','Sorveteria','Parque','Aeroporto','Casamento','Pescaria','Carnaval','Escola','Hospital','Supermercado','Ônibus','Zoológico','Pagode','Rodízio','Fazenda','Montanha-russa','Cachoeira','Feira','Padaria','Videogame','Natal'];
 const FOFOCA_T=['{A} foi visto no shopping de mãos dadas com {B}','{A} chorou assistindo desenho animado','{A} tá namorando escondido o vizinho','{A} e {B} brigaram pela última coxinha','{A} caiu da cadeira na frente da sala inteira','{A} mandou áudio errado no grupo da família','{A} foi barrado na balada por estar de chinelo','{A} tem um perfil secreto de dancinha','{A} dormiu no ônibus e acordou em outra cidade','{A} foi pego cantando sertanejo no chuveiro','{A} adotou 7 gatos sem contar pra ninguém','{A} levou um fora de {B} na festa junina'];
 const QUEM_QS=['Qual a pior desculpa que você já deu pra furar um rolê?','Que mensagem você mandaria no grupo às 3h da manhã?','Qual é a sua maior red flag?','O que você faria com R$ 1 milhão amanhã?','Qual mentira você mais conta?','Qual seria o título da sua biografia?','Qual o seu talento mais inútil?','Se o grupo fosse uma série, qual seria o nome?','O que você faria se acordasse invisível?','Qual comida você defenderia até a morte?','Descreva seu último rolê em 5 palavras.','Qual foi seu maior mico (resumido)?','Qual é a sua opinião polêmica?','Qual seria seu nome de artista?','O que você diria pro seu eu de 10 anos?','Qual música toca na sua cabeça agora?'];
-const MISSIONS=[
- {t:'Churrasco de aniversário do Léo',cats:[{n:'Dia',o:['Sexta','Sábado','Domingo']},{n:'Horário',o:['Meio-dia','16h','20h']},{n:'Local',o:['Casa do Léo','Chácara do tio','Laje da Bia']}]},
- {t:'Cineminha da galera',cats:[{n:'Dia',o:['Quinta','Sábado','Domingo']},{n:'Sessão',o:['14h','19h','22h']},{n:'Filme',o:['Terror','Comédia','Ação']}]},
- {t:'Bate-volta pra praia',cats:[{n:'Dia',o:['Sábado','Domingo','Feriado']},{n:'Saída',o:['5h da manhã','8h','11h']},{n:'Transporte',o:['Carro do Lucas','Ônibus','Van fretada']}]},
- {t:'Noite da pizza',cats:[{n:'Dia',o:['Sexta','Sábado','Domingo']},{n:'Local',o:['Casa da Ana','Pizzaria do centro','Rodízio']},{n:'Sabor',o:['Calabresa','Quatro queijos','Portuguesa']}]},
- {t:'Karaokê de sexta',cats:[{n:'Dia',o:['Quarta','Sexta','Sábado']},{n:'Horário',o:['19h','21h','23h']},{n:'Lugar',o:['Karaokê japonês','Bar do Zé','Casa do Pedro']}]},
- {t:'Futebol + resenha',cats:[{n:'Dia',o:['Terça','Quinta','Domingo']},{n:'Horário',o:['7h','18h','21h']},{n:'Quadra',o:['Society do bairro','Quadra da escola','Campinho de terra']}]},
+/* Quiz: [pergunta, [CERTA, errada, errada, errada]] — a ordem é embaralhada no jogo */
+const QUIZ=[
+ ['Qual é a capital da Austrália?',['Canberra','Sydney','Melbourne','Perth']],
+ ['Quantos jogadores de cada time ficam em campo num jogo de futebol?',['11','10','12','9']],
+ ['Qual é o maior planeta do Sistema Solar?',['Júpiter','Saturno','Netuno','Terra']],
+ ['Em que ano os portugueses chegaram ao Brasil?',['1500','1492','1822','1550']],
+ ['Qual é o maior oceano do mundo?',['Pacífico','Atlântico','Índico','Ártico']],
+ ['Qual é o animal terrestre mais rápido do mundo?',['Guepardo','Leão','Cavalo','Antílope']],
+ ['Qual elemento químico tem o símbolo O?',['Oxigênio','Ouro','Ósmio','Ozônio']],
+ ['Quem pintou a Mona Lisa?',['Leonardo da Vinci','Michelangelo','Picasso','Van Gogh']],
+ ['Quantos lados tem um hexágono?',['6','5','7','8']],
+ ['Qual é o maior país do mundo em área?',['Rússia','Canadá','China','Brasil']],
+ ['Qual é o maior rio do Brasil?',['Amazonas','São Francisco','Paraná','Tocantins']],
+ ['Quantos estados o Brasil tem (sem contar o Distrito Federal)?',['26','27','25','28']],
+ ['Qual é a moeda do Japão?',['Iene','Yuan','Won','Rupia']],
+ ['Qual planeta é conhecido como Planeta Vermelho?',['Marte','Vênus','Júpiter','Mercúrio']],
+ ['Quantos ossos tem o corpo de um adulto?',['206','186','226','300']],
+ ['Qual é o maior órgão do corpo humano?',['Pele','Fígado','Intestino','Pulmão']],
+ ['Quem escreveu "Dom Casmurro"?',['Machado de Assis','José de Alencar','Carlos Drummond de Andrade','Monteiro Lobato']],
+ ['Em qual país ficam as pirâmides de Gizé?',['Egito','México','Peru','Sudão']],
+ ['Qual é a fórmula química da água?',['H2O','CO2','O2','NaCl']],
+ ['Quantos minutos tem um dia?',['1440','1240','1640','960']],
+ ['Qual é o menor país do mundo?',['Vaticano','Mônaco','San Marino','Malta']],
+ ['Que gás as plantas absorvem na fotossíntese?',['Gás carbônico','Oxigênio','Nitrogênio','Hélio']],
+ ['Quantas cores tem o arco-íris?',['7','6','5','8']],
+ ['Qual é a capital do Canadá?',['Ottawa','Toronto','Vancouver','Montreal']],
+ ['Qual desses instrumentos tem teclas?',['Piano','Violão','Saxofone','Bateria']],
+ ['Qual é o ponto mais alto do Brasil?',['Pico da Neblina','Pico da Bandeira','Monte Roraima','Pico das Agulhas Negras']],
+ ['Em qual continente fica o Quênia?',['África','Ásia','Oceania','América do Sul']],
+ ['Quantos jogadores de cada time ficam em quadra no vôlei?',['6','5','7','4']],
+ ['Qual é o maior mamífero do mundo?',['Baleia-azul','Elefante-africano','Girafa','Tubarão-baleia']],
+ ['Quem foi o primeiro homem a pisar na Lua?',['Neil Armstrong','Buzz Aldrin','Yuri Gagarin','Michael Collins']],
+ ['Qual é a capital da Argentina?',['Buenos Aires','Córdoba','Rosário','Montevidéu']],
+ ['Quantas horas tem uma semana?',['168','144','172','120']],
+ ['Que cor se forma misturando azul e amarelo?',['Verde','Roxo','Laranja','Marrom']],
+ ['Qual destes animais é um mamífero que voa?',['Morcego','Coruja','Pinguim','Beija-flor']],
+ ['Qual país tem o formato de uma bota?',['Itália','Grécia','Portugal','Chile']],
+ ['Quantos segundos tem uma hora?',['3600','360','6000','3000']],
+ ['Qual é a capital de Minas Gerais?',['Belo Horizonte','Ouro Preto','Uberlândia','Juiz de Fora']],
+ ['Qual é o planeta mais próximo do Sol?',['Mercúrio','Vênus','Marte','Terra']],
+ ['Quem escreveu os livros de Harry Potter?',['J.K. Rowling','J.R.R. Tolkien','Stephen King','C.S. Lewis']],
+ ['Em qual cidade fica o Cristo Redentor?',['Rio de Janeiro','São Paulo','Salvador','Belo Horizonte']],
+ ['Qual é o maior deserto quente do mundo?',['Saara','Atacama','Gobi','Kalahari']],
+ ['Quantos anos tem um milênio?',['1000','100','10000','500']],
+ ['Qual destes animais NÃO é um mamífero?',['Tubarão','Golfinho','Baleia','Morcego']],
+ ['Qual é o nome do encanador mais famoso dos videogames?',['Mario','Sonic','Link','Pac-Man']],
+ ['Qual é a capital da Bahia?',['Salvador','Feira de Santana','Recife','Ilhéus']],
+ ['Quantas patas tem uma aranha?',['8','6','10','12']],
+ ['Qual é a montanha mais alta do mundo?',['Everest','K2','Aconcágua','Kilimanjaro']],
+ ['Que vitamina o corpo produz quando toma sol?',['Vitamina D','Vitamina C','Vitamina A','Vitamina B12']],
+ ['Qual é o maior estado do Brasil em área?',['Amazonas','Pará','Mato Grosso','Minas Gerais']],
+ ['Qual é o símbolo químico do ouro?',['Au','Ag','Or','Go']],
+ ['Quantos zeros tem o número um milhão?',['6','5','7','9']],
 ];
-const REASONS=['compromisso de família','vai trabalhar','tem prova','prometeu pra mãe','tá sem grana pra isso','não tem como chegar','brigou com alguém de lá','vai estar dormindo (sério)','tem consulta no dentista','aniversário da avó','tem trauma','é alérgico(a)'];
-const BAD=['porra','caralho','krl','crl','pqp','merda','foda','fodase','fdp','vsf','vtnc','bosta','puta','putz','carai','caraio','mano','mana','mlk','vei','slk','tlgd','bagulho','parca','tmj','mds','oxe','pdc','top','sextou','kkk','kkkk','rs'];
+/* Verdade ou Verdade */
+const VERDADES=['Qual foi a maior mentira que você já contou pros seus pais?','Quem desse grupo você levaria pra uma ilha deserta? E quem você deixaria?','Qual foi o último print que você tirou e por quê?','Qual app você tem vergonha do tempo de tela?','Já stalkeou o perfil de alguém desse grupo? De quem?','Qual foi o seu pior corte de cabelo?','Qual a coisa mais vergonhosa do seu histórico de pesquisa (que dá pra contar)?','Qual foi o seu maior mico na escola?','Quem foi o seu primeiro crush?','Já fingiu estar doente pra não ir num rolê? Qual?','Qual hábito estranho você tem quando está sozinho(a)?','Qual música você ouve escondido?','Já mandou mensagem pra pessoa errada? O que era?','Qual foi o presente mais feio que você já ganhou?','Quem do grupo tem mais chance de ficar famoso? E de passar vergonha na TV?','Qual é o seu medo mais bobo?','Qual filme ou série já te fez chorar?','Se pudesse apagar uma foto sua da internet, qual seria?','Já colou numa prova? Como foi?','Qual é o contato salvo com o nome mais esquisito no seu celular?','Quem desse grupo você acha que mais conta mentira?','Qual é a sua maior red flag?','Qual comida esquisita você ama?','Qual foi a última mentira que você contou? Sobre o quê?','Qual é o seu prazer culposo?','Já fingiu que não viu alguém na rua pra não ter que conversar?','Qual foi a coisa mais cara que você já quebrou?','Qual mania sua mais irrita as pessoas?','Já leu a conversa de outra pessoa escondido?','Qual foi o apelido mais vergonhoso que você já teve?','Qual foi a desculpa mais esfarrapada que você já usou?','Qual foi a sua compra mais arrependida?','Qual é o lugar mais estranho onde você já dormiu?','Já ficou bravo(a) com alguém do grupo e não falou nada? Por quê?','Qual famoso é o seu crush impossível?','Qual foi a sua fase mais vergonhosa?','Qual foi o pior rolê da sua vida?','Que mensagem você teria mais medo de alguém ver no seu celular?','Qual é a sua opinião mais impopular?','O que você faria se ficasse invisível por um dia?','Qual foi a maior bronca que você já levou?','Você já se fingiu de ocupado(a) pra não responder alguém do grupo?','Qual foi a coisa mais infantil que você fez esse ano?','Qual é o seu maior defeito, na sua opinião?','Qual elogio você mais gosta de receber?','Quem do grupo você acha que mais te conhece?','Qual foi a sua pior nota e em qual matéria?','Qual foi o maior tempo que você ficou sem tomar banho?'];
+/* Impostor: categoria → palavras */
+const IMP_WORDS={
+ 'Comida':['Pizza','Hambúrguer','Brigadeiro','Coxinha','Sushi','Lasanha','Pastel','Feijoada','Pipoca','Açaí','Pão de queijo','Sorvete','Tapioca','Macarrão','Cachorro-quente'],
+ 'Lugar':['Praia','Escola','Hospital','Shopping','Aeroporto','Cinema','Academia','Igreja','Padaria','Estádio','Zoológico','Farmácia','Biblioteca','Cemitério','Parque de diversões'],
+ 'Animal':['Cachorro','Gato','Girafa','Pinguim','Tubarão','Macaco','Cobra','Elefante','Galinha','Papagaio','Tartaruga','Leão','Vaca','Formiga','Polvo'],
+ 'Objeto':['Celular','Guarda-chuva','Escova de dente','Travesseiro','Controle remoto','Óculos','Relógio','Mochila','Chinelo','Espelho','Vassoura','Panela','Fone de ouvido','Geladeira','Tesoura'],
+ 'Profissão':['Médico','Professor','Bombeiro','Policial','Palhaço','Youtuber','Motorista de ônibus','Cozinheiro','Dentista','Astronauta','Jogador de futebol','Cabeleireiro','Pedreiro','Piloto de avião','Garçom'],
+ 'Esporte e diversão':['Futebol','Natação','Vôlei','Skate','Boxe','Xadrez','Surfe','Basquete','Ciclismo','Corrida','Judô','Tênis','Dança','Pescaria','Videogame'],
+ 'Festa':['Bolo','Balão','Karaokê','Confete','DJ','Fantasia','Parabéns','Vela','Presente','Docinho','Convite','Fogos de artifício','Pista de dança','Refrigerante','Piñata'],
+};
 
 /* ---------------- utils ---------------- */
 const $=(s,r=document)=>r.querySelector(s);
@@ -397,7 +497,6 @@ const BLANK='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABA
 const store={get(k){try{return sessionStorage.getItem(k)}catch(e){return null}},set(k,v){try{sessionStorage.setItem(k,v)}catch(e){}},lget(k){try{return localStorage.getItem(k)}catch(e){return null}},lset(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 function getPid(){let p=store.get('br_pid');if(!p){p='p'+Math.random().toString(36).slice(2,10);store.set('br_pid',p)}return p}
 function genCode(){const A='ABCDEFGHJKMNPQRSTUVWXYZ23456789';let s='';for(let i=0;i<5;i++)s+=A[rand(A.length)];return s}
-function hasBad(t){return norm(t).split(' ').some(x=>BAD.includes(x)||/^k{3,}$/.test(x)||/^(ha){2,}h?$/.test(x))}
 function faceOf(id){let h=0;for(const c of String(id))h=(h*31+c.charCodeAt(0))>>>0;return 'face'+(h%3+1)}
 
 /* ---------------- som ---------------- */
@@ -609,21 +708,10 @@ function hostAction(pid,a){
  sync();
 }
 function chatAct(pid,a){
- const st=H.st,m=st.m;let list=null,inMarcar=false;
- if(st.screen==='lobby')list=st.chat;
- else if(st.screen==='play'&&st.mode==='marcar'&&m&&m.phase==='chat'){list=m.chat;inMarcar=true}
- if(!list)return;
- let text=String(a.text||'').slice(0,200).trim();const img=a.img&&H.images[a.img]?a.img:null;
+ const st=H.st;if(st.screen!=='lobby')return;const list=st.chat;
+ const text=String(a.text||'').slice(0,200).trim();const img=a.img&&H.images[a.img]?a.img:null;
  if(!text&&!img)return;
- let scolded=false;
- if(inMarcar){
-  if(m.audio[pid])return;
-  if(m.limits[pid]!=null){if(m.limits[pid]<=0)return;m.limits[pid]--}
-  if(m.mae&&text&&hasBad(text)){text='(mensagem apagada pela Mãe)';scolded=true;addPts(pid,-50)}
-  stat(pid,'msgs');
- }
  list.push({id:++H.msgId,pid,text:img?'':text,img});
- if(scolded)sysMsg(list,`Mãe: Que boca é essa, ${nameOf(pid)}?! (-50 pts)`,'mae');
  if(list.length>150)list.splice(0,list.length-150);
 }
 
@@ -655,10 +743,11 @@ function toRetro(){
  if(H.champ)aw.push({e:'figurinha',t:'Rei/Rainha das Figurinhas',pid:H.champ,d:'Criou a figurinha oficial'});
  if(x=best('correct'))aw.push({e:'magnifier',t:'Detetive',pid:x.pid,d:`${x.v} ${s_(x.v,'palpite certeiro','palpites certeiros')}`});
  if(x=best('fooled'))aw.push({e:'mask',t:'Mestre do Disfarce',pid:x.pid,d:`Enganou a galera ${x.v} ${s_(x.v,'vez','vezes')}`});
- const fof=best('msgs');
- if(fof){aw.push({e:'megaphone',t:'Mais Fofoqueiro',pid:fof.pid,d:`${fof.v} ${s_(fof.v,'mensagem','mensagens')} no Bora Marcar`});
-  const quiet=ps.filter(p=>p.id!==fof.pid).sort((a,b)=>(S(a.id).msgs||0)-(S(b.id).msgs||0))[0];
-  if(quiet){const q=S(quiet.id).msgs||0;aw.push({e:'eyes',t:'Visualizou e Não Respondeu',pid:quiet.id,d:q?`Só ${q} ${s_(q,'mensagem','mensagens')}`:'Não mandou nenhuma mensagem'})}}
+ if(x=best('impWins'))aw.push({e:'impostor',t:'Impostor Lendário',pid:x.pid,d:`Enganou todo mundo ${x.v} ${s_(x.v,'vez','vezes')}`});
+ if(x=best('quiz'))aw.push({e:'quiz',t:'Gênio da Resenha',pid:x.pid,d:`${x.v} ${s_(x.v,'acerto','acertos')} no quiz`});
+ if(x=best('believed'))aw.push({e:'angel',t:'Mais Sincero',pid:x.pid,d:`${x.v} ${s_(x.v,'pessoa acreditou','pessoas acreditaram')} nas respostas`});
+ if(x=best('lieVotes'))aw.push({e:'liar',t:'Pinóquio do Grupo',pid:x.pid,d:`${x.v} ${s_(x.v,'voto','votos')} de "mentiu!"`});
+ if(x=best('amarelou'))aw.push({e:'shock',t:'Amarelão',pid:x.pid,d:`Fugiu de ${x.v} ${s_(x.v,'pergunta','perguntas')}`});
  st.retro={awards:aw,avatars:ps.filter(p=>p.avatar&&H.avatarBy[p.id]).map(p=>({of:p.id,by:H.avatarBy[p.id],img:p.avatar}))};
  st.screen='retro';st.m=null;
 }
@@ -869,58 +958,112 @@ MH.quem={
  nextRound(){H.mx.round++;if(H.mx.round>=H.mx.rounds)endMode();else MH.quem.write()}
 };
 
-MH.marcar={
- mkCards(mis,plan){
-  return shuffle([0,1,2]).slice(0,2).map(ci=>{const c=mis.cats[ci];const opts=c.o.map((_,i)=>i).filter(i=>i!==plan[ci]);const o=pick(opts);
-   return {ci,o,text:`${c.n}: ${c.o[o]} não dá (${pick(REASONS)})`}});
- },
- start(){
-  const X=H.mx,part=shuffle(X.part);const mis=pick(MISSIONS);const carl=pick(part);X.carl=carl;X.mis=mis;
-  const plan=mis.cats.map(c=>rand(c.o.length));X.cards={};
-  part.forEach(id=>{if(id===carl){X.fake=MH.marcar.mkCards(mis,mis.cats.map(c=>rand(c.o.length)));H.priv[id]={carlao:true,cards:X.fake.map(c=>c.text)}}
-   else{X.cards[id]=MH.marcar.mkCards(mis,plan);H.priv[id]={cards:X.cards[id].map(c=>c.text)}}});
-  const m=H.st.m={phase:'chat',title:mis.t,cats:mis.cats,polls:mis.cats.map(()=>({})),chat:[],limits:{},audio:{},mae:false};
-  sysMsg(m.chat,`${nameOf(H.st.hostId)} criou o grupo "${mis.t}"`,'chat');
-  sysMsg(m.chat,'Missão: fechem as 3 enquetes antes do tempo acabar. Ninguém pode ficar de fora!','target');
-  setTimer(150,MH.marcar.toVote);
-  const g=H.gen,sp=H.st.settings.speed;const evs=shuffle(['mae','bateria','audio']);
-  setTimeout(()=>{if(H.gen===g&&H.st.m&&H.st.m.phase==='chat')MH.marcar.event(evs[0])},35000*sp);
-  setTimeout(()=>{if(H.gen===g&&H.st.m&&H.st.m.phase==='chat')MH.marcar.event(evs[1])},85000*sp);
- },
- event(type){
-  const m=H.st.m;const on=H.mx.part.filter(id=>(P_(id)||{}).on);if(!on.length)return;
-  if(type==='mae'){
-   m.mae=true;sysMsg(m.chat,'Mãe entrou no grupo','mae');sysMsg(m.chat,'Mãe: Oi meus amores!! Aqui é lugar de respeito, nada de palavrão nem gíria viu','mae');
-   const g=H.gen;setTimeout(()=>{if(H.gen!==g)return;m.mae=false;sysMsg(m.chat,'Mãe saiu do grupo','mae');sync()},25000);
-  } else if(type==='bateria'){const id=pick(on);m.limits[id]=3;sysMsg(m.chat,`${nameOf(id)} está com 1% de bateria! Só pode mandar mais 3 mensagens.`,'battery')}
-  else if(type==='audio'){const id=pick(on);m.audio[id]=true;sysMsg(m.chat,`A tia mandou um áudio de 4 minutos pra ${nameOf(id)}. Só volta a digitar depois de ouvir tudo!`,'mic')}
-  sync();
+MH.quiz={
+ start(){const X=H.mx;X.qs=shuffle(QUIZ).slice(0,8);X.i=-1;X.streak={};MH.quiz.next()},
+ next(){
+  const X=H.mx;X.i++;if(X.i>=X.qs.length)return endMode();
+  const q=X.qs[X.i];const order=shuffle([0,1,2,3]);X.right=order.indexOf(0);X.ans={};X.t0=Date.now();
+  H.st.m={phase:'q',k:X.i,n:X.i+1,total:X.qs.length,q:q[0],opts:order.map(i=>q[1][i]),done:[]};
+  setTimer(15,MH.quiz.reveal);
  },
  act(pid,a){
   const m=H.st.m,X=H.mx;
-  if(a.a==='poll'&&m.phase==='chat'){const c=m.cats[a.c];if(c&&Number.isInteger(a.o)&&a.o>=0&&a.o<c.o.length)m.polls[a.c][pid]=a.o}
-  else if(a.a==='audioDone'&&m.audio[pid]){m.audio[pid]=false;sysMsg(m.chat,`${nameOf(pid)} ouviu o áudio todo (era sobre o cachorro do vizinho)`,'check')}
-  else if(a.a==='endChat'&&pid===H.st.hostId&&m.phase==='chat'){clearTimer();MH.marcar.toVote()}
-  else if(a.a==='vote'&&m.phase==='vote'&&a.t!==pid&&P_(a.t)&&!m.voted.includes(pid)){
-   X.votes[pid]=a.t;m.voted.push(pid);
-   if(allDone(m.voted)){clearTimer();MH.marcar.resolve()}
+  if(a.a==='answer'&&m.phase==='q'&&!m.done.includes(pid)&&Number.isInteger(a.i)&&a.i>=0&&a.i<4){
+   X.ans[pid]={i:a.i,t:Date.now()-X.t0};m.done.push(pid);
+   if(allDone(m.done)){clearTimer();MH.quiz.reveal()}
   }
  },
- toVote(){const m=H.st.m;m.phase='vote';m.mae=false;m.voted=[];H.mx.votes={};setTimer(30,MH.marcar.resolve)},
- resolve(){
+ reveal(){
+  const m=H.st.m,X=H.mx;const dur=15000*H.st.settings.speed;const picks={},gain={},streak={};
+  X.part.forEach(pid=>{
+   const an=X.ans[pid];if(an)picks[pid]=an.i;
+   if(an&&an.i===X.right){
+    const s=X.streak[pid]=(X.streak[pid]||0)+1;
+    let g=Math.round(500+500*Math.max(0,1-an.t/dur));if(s>1)g+=Math.min(300,(s-1)*100);
+    addPts(pid,g);gain[pid]=g;streak[pid]=s;stat(pid,'quiz');
+   } else X.streak[pid]=0;
+  });
+  m.phase='reveal';m.right=X.right;m.picks=picks;m.gain=gain;m.streak=streak;
+  setTimer(6,MH.quiz.next,false);
+ }
+};
+
+MH.impostor={
+ start(){
+  const X=H.mx;const part=shuffle(X.part);const cat=pick(Object.keys(IMP_WORDS));const word=pick(IMP_WORDS[cat]);const imp=pick(part);
+  X.imp=imp;X.word=word;X.cat=cat;
+  part.forEach(id=>{H.priv[id]=id===imp?{impostor:true,cat}:{word,cat}});
+  const order=part.slice();if(order[0]===imp&&order.length>1)order.push(order.shift()); // o impostor nunca começa
+  H.st.m={phase:'clue',cat,order:order.concat(order),turn:-1,clues:[],cur:null};
+  MH.impostor.next();
+ },
+ next(){
+  const m=H.st.m;
+  do{m.turn++}while(m.turn<m.order.length&&!(P_(m.order[m.turn])||{}).on);
+  if(m.turn>=m.order.length)return MH.impostor.toVote();
+  m.cur=m.order[m.turn];
+  setTimer(30,()=>{m.clues.push({pid:m.cur,text:null});MH.impostor.next()});
+ },
+ act(pid,a){
   const m=H.st.m,X=H.mx;
-  const plan=m.cats.map((c,ci)=>{const cnt=c.o.map(()=>0);Object.values(m.polls[ci]).forEach(o=>cnt[o]++);const mx=Math.max(...cnt);return pick(cnt.map((n,i)=>n===mx?i:-1).filter(i=>i>=0))});
-  const viol=[];
-  X.part.forEach(id=>{if(id===X.carl)return;(X.cards[id]||[]).forEach(cd=>{if(plan[cd.ci]===cd.o)viol.push({pid:id,text:cd.text})})});
-  const ok=viol.length===0;
-  const tally={};Object.values(X.votes).forEach(t=>tally[t]=(tally[t]||0)+1);
-  const mx=Math.max(0,...Object.values(tally));const caught=mx>0&&tally[X.carl]===mx;
-  X.part.forEach(id=>{if(id===X.carl)return;if(ok)addPts(id,200);if(caught)addPts(id,100);if(X.votes[id]===X.carl){addPts(id,100);stat(id,'correct')}});
-  if(!ok)addPts(X.carl,300);if(!caught)addPts(X.carl,300);if(!ok||!caught)stat(X.carl,'carlaoWins');
-  m.phase='result';
-  m.res={plan:m.cats.map((c,ci)=>({n:c.n,o:c.o[plan[ci]],rnd:!Object.keys(m.polls[ci]).length})),viol,ok,caught,carl:X.carl,tally,
-   cards:X.part.map(id=>({pid:id,carl:id===X.carl,cards:(id===X.carl?X.fake:X.cards[id]||[]).map(c=>c.text)}))};
-  setTimer(22,endMode,false);
+  if(a.a==='clue'&&m.phase==='clue'&&pid===m.cur){
+   const t=String(a.text||'').replace(/\s+/g,' ').trim().slice(0,24);if(!t)return;
+   const nt=norm(t),nw=norm(X.word);if(pid!==X.imp&&(nt===nw||nt.includes(nw)))return; // não vale falar a palavra
+   m.clues.push({pid,text:t});clearTimer();MH.impostor.next();
+  } else if(a.a==='vote'&&m.phase==='vote'&&a.t!==pid&&P_(a.t)&&!m.voted.includes(pid)){
+   X.votes[pid]=a.t;m.voted.push(pid);
+   if(allDone(m.voted)){clearTimer();MH.impostor.resolve()}
+  } else if(a.a==='guess'&&m.phase==='guess'&&pid===X.imp){
+   const g=norm(a.text),w=norm(X.word);
+   const ok=g===w||(g.length>=4&&(g.includes(w)||w.includes(g)));
+   clearTimer();MH.impostor.final(true,ok,String(a.text).slice(0,40));
+  }
+ },
+ toVote(){const m=H.st.m;m.phase='vote';m.cur=null;m.voted=[];H.mx.votes={};setTimer(45,MH.impostor.resolve)},
+ resolve(){
+  const m=H.st.m,X=H.mx;const tally={};Object.values(X.votes).forEach(t=>tally[t]=(tally[t]||0)+1);
+  const mx=Math.max(0,...Object.values(tally));const caught=mx>0&&tally[X.imp]===mx;m.tally=tally;
+  if(caught&&(P_(X.imp)||{}).on){m.phase='guess';m.imp=X.imp;setTimer(25,()=>MH.impostor.final(true,false,''))}
+  else MH.impostor.final(caught,false,null);
+ },
+ final(caught,guessOk,guess){
+  const m=H.st.m,X=H.mx;const impWins=!caught||guessOk;
+  if(impWins){addPts(X.imp,600);stat(X.imp,'impWins')}
+  else X.part.forEach(id=>{if(id!==X.imp)addPts(id,100)});
+  Object.entries(X.votes).forEach(([v,t])=>{if(t===X.imp){addPts(v,200);stat(v,'correct')}});
+  m.phase='result';m.res={imp:X.imp,word:X.word,cat:X.cat,caught,guess,guessOk,impWins};
+  setTimer(14,endMode,false);
+ }
+};
+
+MH.verdade={
+ start(){const X=H.mx;X.order=shuffle(X.part).slice(0,8);X.r=-1;X.used=[];MH.verdade.next()},
+ next(){
+  const X=H.mx;
+  do{X.r++}while(X.r<X.order.length&&!(P_(X.order[X.r])||{}).on);
+  if(X.r>=X.order.length)return endMode();
+  const left=VERDADES.filter(q=>!X.used.includes(q));const qs=shuffle(left.length>=2?left:VERDADES).slice(0,2);X.used.push(...qs);
+  H.st.m={phase:'pick',k:X.r,hot:X.order[X.r],n:X.r+1,total:X.order.length,qs};
+  setTimer(15,()=>MH.verdade.pickQ(rand(2)));
+ },
+ pickQ(i){const m=H.st.m;m.q=m.qs[i];m.phase='answer';setTimer(60,()=>MH.verdade.amarelou(true))},
+ amarelou(timeout){const m=H.st.m;addPts(m.hot,-100);stat(m.hot,'amarelou');m.phase='result';m.amarelou=true;m.timeout=!!timeout;setTimer(6,MH.verdade.next,false)},
+ act(pid,a){
+  const m=H.st.m,X=H.mx;
+  if(a.a==='pickq'&&m.phase==='pick'&&pid===m.hot&&(a.i===0||a.i===1)){clearTimer();MH.verdade.pickQ(a.i)}
+  else if(a.a==='vanswer'&&m.phase==='answer'&&pid===m.hot){
+   m.answer=String(a.text||'').trim().slice(0,240);m.voice=!m.answer;m.phase='judge';m.voted=[];X.jv={};
+   clearTimer();setTimer(20,MH.verdade.judged);
+  } else if(a.a==='skipq'&&m.phase==='answer'&&pid===m.hot){clearTimer();MH.verdade.amarelou(false)}
+  else if(a.a==='judge'&&m.phase==='judge'&&pid!==m.hot&&!m.voted.includes(pid)&&(a.v==='t'||a.v==='l')){
+   X.jv[pid]=a.v;m.voted.push(pid);
+   if(allDone(m.voted,X.part.filter(id=>id!==m.hot))){clearTimer();MH.verdade.judged()}
+  }
+ },
+ judged(){
+  const m=H.st.m,X=H.mx;const t=[],l=[];Object.entries(X.jv).forEach(([p,v])=>(v==='t'?t:l).push(p));
+  addPts(m.hot,t.length*100);if(t.length)stat(m.hot,'believed',t.length);if(l.length)stat(m.hot,'lieVotes',l.length);
+  m.phase='result';m.trust=t;m.lie=l;setTimer(7,MH.verdade.next,false);
  }
 };
 
@@ -1279,46 +1422,71 @@ SCR['quem:guess']=S_({render:v=>{const m=v.s.m;const done=m.done.includes(ME.pid
 SCR['quem:reveal']=S_({render:v=>{const m=v.s.m;return `<div class="stage"><div class="headline">${spr('magnifier')} Revelado!</div><p class="muted">“${esc(m.q)}”</p><div class="qlist">${m.msgs.map(x=>`<div class="qmsg"><div class="msg"><span>${av(P(x.by),'md')}</span><div class="bub anon"><b style="color:${(P(x.by)||{}).color}">${nm(x.by)}</b>${esc(x.text)}</div></div><div class="right">${x.right.length?`${spr('check')} Acertaram: ${x.right.map(id=>av(P(id),'xs')).join('')}`:`${spr('mask')} Ninguém acertou!`}</div></div>`).join('')}</div></div>`}});
 
 /* ---- Bora Marcar? ---- */
-function cardsHTML(v){const cs=(v.me.cards||[]).map(c=>`<li>${esc(c)}</li>`).join('');
- return v.me.carlao?`<div class="secret carl"><div class="sh">${spr('carlao','s3')}<div>Você é o <b>BOBÃO</b>!</div></div><small>Objetivo: fazer o rolê dar errado (alguém não poder ir) <b>ou</b> não ser descoberto. Use essas cartas falsas pra disfarçar:</small><ul>${cs}</ul></div>`
-  :`<div class="secret"><div class="sh">${spr('card','s3')}<div>Suas restrições secretas</div></div><ul>${cs}</ul><small>Conte pra galera (ou não…). Cuidado: o Bobão pode mentir!</small></div>`}
-function pollsHTML(v,ro){const m=v.s.m;return m.cats.map((c,ci)=>{const votes=m.polls[ci]||{};const total=Object.keys(votes).length;
- return `<div class="poll"><div class="ptitle">${spr('poll')} ${esc(c.n)}</div>${c.o.map((o,oi)=>{const vs=Object.keys(votes).filter(pid=>votes[pid]===oi);const mine=votes[ME.pid]===oi;const pct=total?Math.round(vs.length/total*100):0;
-  return `<button class="popt ${mine?'on':''}" data-c="${ci}" data-o="${oi}" ${ro?'disabled':''}><span class="pbar" style="width:${pct}%"></span><span class="plabel">${spr(mine?'check':'box')} ${esc(o)}</span><span class="pvoters">${vs.map(id=>av(P(id),'xs')).join('')}</span></button>`}).join('')}</div>`}).join('')}
-SCR['marcar:chat']=()=>{let chat;return{
- mount(main,v){
-  main.innerHTML=`<div class="marcar"><aside class="panel"><div class="ptitle">${spr('target','s2')} Missão</div><div class="mission">${esc(v.s.m.title)}</div><p class="muted small">Fechem as 3 enquetes antes do tempo acabar. O rolê só dá certo se <b>ninguém</b> ficar de fora!</p><div id="mycards"></div><div id="audiobox"></div></aside>
-  <section class="panel"><div id="maeb"></div><div id="chat" class="chatbox tall"></div></section>
-  <aside class="panel"><div id="polls"></div><div id="hostend"></div></aside></div>`;
-  chat=ChatBox($('#chat'),{list:v=>v.s.m.chat,note:v=>{const m=v.s.m;if(m.audio&&m.audio[ME.pid])return {ico:'mic',text:'Ouça o áudio da tia (painel da esquerda) pra poder digitar!',dis:true};if(m.limits&&m.limits[ME.pid]!=null)return {ico:'battery',text:`1% de bateria: ${m.limits[ME.pid]} mensagem(ns) restante(s)`,dis:m.limits[ME.pid]<=0};return null}});
-  $('#polls').onclick=e=>{const b=e.target.closest('.popt');if(b&&!b.disabled)act({a:'poll',c:+b.dataset.c,o:+b.dataset.o})};
-  $('#hostend').onclick=e=>{if(e.target.closest('#endc')&&confirm('Fechar o rolê agora e ir pra votação?'))act({a:'endChat'})};
-  this.update(v);
- },
+/* ---- Quiz Relâmpago ---- */
+const QCOL=['#e63946','#3a86ff','#e09b00','#25a244'],QLET=['A','B','C','D'];
+SCR['quiz:q']=S_({render:v=>{const m=v.s.m;const done=m.done.includes(ME.pid);const mine=LOCAL.ans;
+  return `<div class="stage"><div class="pill">Pergunta ${m.n}/${m.total}</div><div class="headline qq">${esc(m.q)}</div>
+  <div class="qgrid">${m.opts.map((o,i)=>`<button class="qopt ${mine===i?'on':''} ${done&&mine!==i?'dim':''}" data-i="${i}" ${done?'disabled':''} style="--qc:${QCOL[i]}"><span class="ql">${QLET[i]}</span><span>${esc(o)}</span></button>`).join('')}</div>
+  <p class="muted small">${done?'Resposta enviada! ':''}${m.done.length}/${onlineCount(v)} responderam</p></div>`},
+ bind:main=>{main.onclick=e=>{const b=e.target.closest('.qopt');if(!b||b.disabled)return;LOCAL.ans=+b.dataset.i;act({a:'answer',i:+b.dataset.i})}}});
+SCR['quiz:reveal']=S_({render:v=>{const m=v.s.m;const g=m.gain[ME.pid];const picked=m.picks[ME.pid];const st=m.streak[ME.pid];
+  return `<div class="stage"><div class="pill">Pergunta ${m.n}/${m.total}</div><div class="headline qq">${esc(m.q)}</div>
+  <div class="qgrid">${m.opts.map((o,i)=>{const who=Object.keys(m.picks).filter(p=>m.picks[p]===i);return `<div class="qopt ${i===m.right?'right':'dim'}" style="--qc:${QCOL[i]}"><span class="ql">${i===m.right?spr('check'):QLET[i]}</span><span>${esc(o)}</span><span class="qwho">${who.map(id=>av(P(id),'xs')).join('')}</span></div>`}).join('')}</div>
+  <div class="qres ${g?'ok':'bad'}">${g?`${spr('star')} Acertou! +${g}${st>1?` · ${st} seguidas ${spr('fire')}`:''}`:picked==null?`${spr('clock')} Não respondeu a tempo`:`${spr('x')} Errou!`}</div></div>`},
+ mount:()=>{const g=V.s.m.gain[ME.pid];if(g){beep(880,.1,'triangle',.06);setTimeout(()=>beep(1320,.15,'triangle',.06),100)}else beep(220,.25,'sawtooth',.04)}});
+
+/* ---- Impostor ---- */
+function impSecret(v){return v.me.impostor
+ ?`<div class="secret carl"><div class="sh">${spr('impostor','s3')}<div>Você é o <b>IMPOSTOR</b>!<br><small>Categoria: <b class="hl">${esc(v.me.cat)}</b></small></div></div><small>Você NÃO sabe a palavra. Preste atenção nas dicas da galera e disfarça!</small></div>`
+ :`<div class="secret"><div class="sh">${spr('card','s3')}<div>Palavra secreta <small>(${esc(v.me.cat||'')})</small>:<br><span class="hl big">${esc(v.me.word||'?')}</span></div></div><small>Dê dicas que mostrem que você sabe, sem entregar demais pro impostor!</small></div>`}
+function cluesHTML(v){const m=v.s.m;const players=m.order.slice(0,m.order.length/2);
+ return `<div class="clues">${players.map(id=>{const cs=m.clues.filter(c=>c.pid===id);return `<div class="crow ${m.cur===id?'cur':''}">${av(P(id),'sm')}<b>${nm(id)}</b><span class="cchips">${cs.map(c=>c.text?`<span class="chip">${esc(c.text)}</span>`:`<span class="chip off">(ficou quieto)</span>`).join('')}${m.cur===id?'<span class="chip typing">pensando…</span>':''}</span></div>`}).join('')}</div>`}
+SCR['impostor:clue']=()=>({
+ mount(main,v){main.innerHTML=`<div class="rabisco"><div class="rleft">${impSecret(v)}</div><div class="rcenter"><div class="pill">Categoria: ${esc(v.s.m.cat)}</div><div id="turninfo" class="headline sm"></div><div id="myturn"></div><div id="clues" style="width:min(620px,94vw)"></div></div></div>`;this.update(v)},
  update(v){
-  const m=v.s.m;setHTML($('#mycards'),cardsHTML(v));setHTML($('#polls'),pollsHTML(v));
-  setHTML($('#maeb'),m.mae?`<div class="mae">${spr('mae','s2')} A MÃE ESTÁ NO GRUPO: sem palavrão e sem gíria! (-50)</div>`:'');
-  setHTML($('#hostend'),isHostMe()?`<button class="btn pink" id="endc" style="width:100%">${spr('lock')} Fechar o rolê agora</button>`:'');
-  const ab=$('#audiobox');
-  if(m.audio&&m.audio[ME.pid]){if(!$('#holdBtn')){setHTML(ab,`<div class="audio"><p>${spr('mic','s2')}<br><b>Áudio da tia (4:12)</b><br><small>Segure o botão até o fim pra liberar seu chat</small></p><button id="holdBtn" class="btn yel">Segure pra ouvir</button><div class="hbar"><i id="holdBar"></i></div></div>`);bindHold()}}
-  else setHTML(ab,'');
-  chat.update(v);
- }
-}};
-function bindHold(){const b=$('#holdBtn'),bar=$('#holdBar');if(!b)return;let t=null,prog=0;
- const stop=()=>{if(t){clearInterval(t);t=null}if(prog<100){prog=0;bar.style.width='0%'}};
- b.onpointerdown=e=>{try{b.setPointerCapture(e.pointerId)}catch(_){}if(t)return;t=setInterval(()=>{prog+=100/60;bar.style.width=Math.min(100,prog)+'%';if(prog>=100){clearInterval(t);t=null;act({a:'audioDone'})}},100)};
- b.onpointerup=b.onpointercancel=stop;b.onpointerleave=stop;}
-SCR['marcar:vote']=S_({render:v=>{const m=v.s.m;const voted=m.voted.includes(ME.pid);const ids=v.s.players.filter(p=>p.id!==ME.pid).map(p=>p.id);
-  return `<div class="stage"><div class="headline">${spr('carlao')} Quem é o Bobão?</div><p class="muted">${voted?'Voto registrado! Esperando a galera…':'Quem estava sabotando o rolê?'}</p>${voteGrid(ids,LOCAL.vote,voted)}<p class="muted small">${m.voted.length}/${onlineCount(v)} votaram</p><div class="rvote"><div class="panel" style="min-width:280px">${pollsHTML(v,true)}</div><div style="max-width:340px">${cardsHTML(v)}</div></div></div>`},
+  const m=v.s.m;const mine=m.cur===ME.pid;const lap=m.turn<m.order.length/2?1:2;
+  setHTML($('#turninfo'),mine?`${spr('chat')} <span class="hl">Sua vez!</span> Mande UMA palavra de dica`:`${spr('chat')} Vez de ${av(P(m.cur),'sm')} <b>${nm(m.cur)}</b> <small class="muted">(rodada ${lap}/2)</small>`);
+  const box=$('#myturn');
+  if(mine&&!$('#clueIn')){
+   setHTML(box,`<div class="row"><input id="clueIn" maxlength="24" placeholder="Sua dica (uma palavra)" autocomplete="off"><button class="btn yel" id="clueBtn">${spr('send')} Enviar</button></div>`);
+   const inp=$('#clueIn');inp.focus();
+   const go=()=>{const t=inp.value.trim();if(!t)return;if(!V.me.impostor&&V.me.word){const nt=norm(t),nw=norm(V.me.word);if(nt===nw||nt.includes(nw))return toast('Não vale falar a palavra!')}act({a:'clue',text:t});$('#clueBtn').disabled=true;inp.disabled=true};
+   $('#clueBtn').onclick=go;inp.onkeydown=e=>{if(e.key==='Enter')go()};this.go=go;
+  } else if(!mine)setHTML(box,'');
+  setHTML($('#clues'),cluesHTML(v));
+ },
+ tick(){const inp=$('#clueIn');if(inp&&!inp.disabled&&inp.value.trim()&&V.s.deadline&&remain()<=1&&this.go)this.go()}
+});
+SCR['impostor:vote']=S_({render:v=>{const m=v.s.m;const voted=m.voted.includes(ME.pid);const ids=v.s.players.filter(p=>p.id!==ME.pid).map(p=>p.id);
+  return `<div class="stage"><div class="headline">${spr('impostor')} Quem é o impostor?</div><p class="muted">${voted?'Voto registrado! Esperando a galera…':'Olhem as dicas e discutam na call!'}</p><div style="width:min(620px,94vw)">${cluesHTML(v)}</div>${voteGrid(ids,LOCAL.vote,voted)}<p class="muted small">${m.voted.length}/${onlineCount(v)} votaram</p>${impSecret(v)}</div>`},
  bind:main=>bindVote(main)});
-SCR['marcar:result']=S_({render:v=>{const r=v.s.m.res;
-  return `<div class="stage">${spr(r.ok?'party':'x','s4 bigico')}<div class="headline">${r.ok?'ROLÊ MARCADO!':'O ROLÊ FUROU!'}</div><div class="mission">${esc(v.s.m.title)}</div>
-  <div class="plan">${r.plan.map(x=>`<div><small>${esc(x.n)}${x.rnd?' (ninguém votou: sorteado)':''}</small>${esc(x.o)}</div>`).join('')}</div>
-  ${r.viol.length?`<div>${r.viol.map(x=>`<div class="viol">${spr('x')} ${av(P(x.pid),'xs')} <b>${nm(x.pid)}</b> não pode ir → ${esc(x.text)}</div>`).join('')}</div>`:`<p class="hl row" style="justify-content:center">${spr('check')} Todo mundo consegue ir!</p>`}
-  <div class="card"><p class="row" style="justify-content:center">${spr('carlao','s2')} ${r.caught?'Pegaram o Bobão:':'O Bobão passou batido:'} ${av(P(r.carl),'md')} <b class="hl">${nm(r.carl)}</b></p></div>
-  <div class="ptitle">${spr('card')} As cartas de todo mundo</div><div class="cardsgrid">${r.cards.map(c=>`<div class="pcards ${c.carl?'carl':''}">${av(P(c.pid),'xs')} <b>${nm(c.pid)}</b>${c.carl?' (Bobão, cartas falsas)':''}<ul>${c.cards.map(t=>`<li>${esc(t)}</li>`).join('')}</ul></div>`).join('')}</div></div>`},
- mount:()=>burst(V.s.m.res.ok?['party','star','heart']:['x','carlao','clown'])});
+SCR['impostor:guess']=()=>({mount(main,v){const m=v.s.m;const me=!!v.me.impostor;
+ main.innerHTML=`<div class="stage">${spr('impostor','s6 bigico')}<div class="headline">Pegaram o impostor: ${av(P(m.imp),'md')} <span class="hl">${nm(m.imp)}</span>!</div>${me?`<p>Última chance: adivinhe a palavra secreta (categoria: <b>${esc(m.cat)}</b>) e vença mesmo assim!</p><div class="row"><input id="gin" maxlength="30" placeholder="A palavra era…"><button class="btn yel" id="gbtn">${spr('target')} Chutar</button></div>`:`<p class="muted">Calma… se o impostor acertar a palavra, ele vence mesmo assim!</p>`}<div style="width:min(620px,94vw)">${cluesHTML(v)}</div></div>`;
+ if(me){const go=()=>{const t=$('#gin').value.trim();if(t){act({a:'guess',text:t});$('#gbtn').disabled=true;$('#gin').disabled=true}};$('#gbtn').onclick=go;$('#gin').onkeydown=e=>{if(e.key==='Enter')go()};$('#gin').focus()}
+}});
+SCR['impostor:result']=S_({render:v=>{const r=v.s.m.res;return `<div class="stage">${spr(r.impWins?'impostor':'party','s6 bigico')}<div class="headline">${r.impWins?'O IMPOSTOR VENCEU!':'A galera pegou o impostor!'}</div><div class="card"><p>O impostor era ${av(P(r.imp),'md')} <b class="hl">${nm(r.imp)}</b></p><p>A palavra era <b class="hl">${esc(r.word)}</b> <span class="muted">(${esc(r.cat)})</span></p>${r.caught?(r.guess!=null?`<p>Chute do impostor: “${esc(r.guess||'—')}” ${r.guessOk?'(acertou!)':'(errou)'}</p>`:''):'<p>A galera votou na pessoa errada!</p>'}</div><div style="width:min(620px,94vw)">${cluesHTML(v)}</div></div>`},
+ mount:()=>burst(V.s.m.res.impWins?['impostor','clown','skull']:['party','magnifier','clap'])});
+
+/* ---- Verdade ou Verdade ---- */
+SCR['verdade:pick']=S_({render:v=>{const m=v.s.m;const me=m.hot===ME.pid;
+  return `<div class="stage"><div class="pill">Rodada ${m.n}/${m.total}</div><div class="hotseat">${av(P(m.hot),'xl')}<div class="headline">${me?'Você está na BERLINDA!':`${nm(m.hot)} está na berlinda!`}</div></div><p class="muted">${me?'Escolha a pergunta que você vai responder:':'Escolhendo a pergunta… (vocês também veem as duas opções)'}</p><div class="vcards">${m.qs.map((q,i)=>`<button class="vcard" data-i="${i}" ${me?'':'disabled'}>${spr('angel','s2')}<span>${esc(q)}</span></button>`).join('')}</div></div>`},
+ bind:main=>{main.onclick=e=>{const b=e.target.closest('.vcard');if(!b||b.disabled)return;act({a:'pickq',i:+b.dataset.i})}}});
+SCR['verdade:answer']=()=>({mount(main,v){const m=v.s.m;const me=m.hot===ME.pid;
+ main.innerHTML=`<div class="stage"><div class="hotseat">${av(P(m.hot),'lg')}<b>${nm(m.hot)}</b></div><div class="quote big">${spr('angel','s2')} ${esc(m.q)}</div>${me?`<textarea id="vin" maxlength="240" rows="3" placeholder="Sua resposta (ou responda em voz alta na call)"></textarea><div class="actions"><button class="btn big" id="vsend">${spr('send')} Responder</button><button class="btn ghost" id="vvoice">${spr('mic')} Respondi em voz alta</button><button class="btn pink" id="vskip">${spr('shock')} Amarelar (-100)</button></div>`:`<p class="muted">Esperando ${nm(m.hot)} responder… (pode ser em voz alta na call)</p>`}</div>`;
+ if(me){const go=t=>{act({a:'vanswer',text:t});$$('.actions button',main).forEach(b=>b.disabled=true)};$('#vin').focus();
+  $('#vsend').onclick=()=>{const t=$('#vin').value.trim();if(!t)return toast('Escreva a resposta ou clique em "Respondi em voz alta"');go(t)};
+  $('#vvoice').onclick=()=>go('');$('#vskip').onclick=()=>{if(confirm('Amarelar e perder 100 pontos?'))act({a:'skipq'})}}
+}});
+SCR['verdade:judge']=S_({render:v=>{const m=v.s.m;const me=m.hot===ME.pid;const voted=m.voted.includes(ME.pid);
+  return `<div class="stage"><div class="hotseat">${av(P(m.hot),'lg')}<b>${nm(m.hot)}</b></div><div class="quote">${esc(m.q)}</div><div class="answer">${m.voice?`${spr('mic','s2')} Respondeu em voz alta na call`:`“${esc(m.answer)}”`}</div>
+  ${me?'<p class="muted">A galera tá decidindo se acredita em você…</p>':voted?SENT('Voto registrado!'):`<div class="actions"><button class="btn big" data-v="t">${spr('angel')} Acredito</button><button class="btn big pink" data-v="l">${spr('liar')} Mentiu!</button></div>`}<p class="muted small">${m.voted.length}/${Math.max(0,onlineCount(v)-1)} votaram</p></div>`},
+ bind:main=>{main.onclick=e=>{const b=e.target.closest('[data-v]');if(!b||b.disabled)return;$$('[data-v]',main).forEach(x=>x.disabled=true);act({a:'judge',v:b.dataset.v})}}});
+SCR['verdade:result']=S_({render:v=>{const m=v.s.m;
+  if(m.amarelou)return `<div class="stage">${spr('shock','s6 bigico')}<div class="headline">${nm(m.hot)} AMARELOU!</div><p class="muted">${m.timeout?'O tempo acabou sem resposta.':'Pulou a pergunta.'} -100 pontos</p><div class="quote">${esc(m.q||'')}</div></div>`;
+  return `<div class="stage"><div class="hotseat">${av(P(m.hot),'lg')}<b>${nm(m.hot)}</b></div><div class="answer">${m.voice?`${spr('mic','s2')} Respondeu em voz alta`:`“${esc(m.answer)}”`}</div>
+  <div class="verdict"><div class="vside ok">${spr('angel','s3')}<b>${m.trust.length} ${m.trust.length===1?'acreditou':'acreditaram'}</b><span>${m.trust.map(id=>av(P(id),'sm')).join('')}</span></div><div class="vside bad">${spr('liar','s3')}<b>${m.lie.length} ${m.lie.length===1?'acha':'acham'} que mentiu</b><span>${m.lie.map(id=>av(P(id),'sm')).join('')}</span></div></div>
+  <p class="hl">+${m.trust.length*100} pontos pra ${nm(m.hot)}</p></div>`},
+ mount:()=>{const m=V.s.m;burst(m.amarelou?['shock','clown']:m.lie.length>m.trust.length?['liar','clown']:['angel','heart'])}});
 
 /* ---- Retrospectiva ---- */
 SCR.retro=S_({render:v=>{const s=v.s,r=s.retro||{awards:[],avatars:[]};const sorted=s.players.slice().sort((a,b)=>b.score-a.score);
